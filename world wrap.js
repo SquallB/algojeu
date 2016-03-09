@@ -19,7 +19,7 @@ var bullet;
 
 function create() {
 
-    game.world.setBounds(0, 0, 1920, 1200);
+    game.world.setBounds(0, 0, 1920, 1080);
 
     game.add.sprite(0, 0, 'backdrop');
 
@@ -42,7 +42,6 @@ function create() {
         b.exists = false;
         b.visible = false;
         b.checkWorldBounds = true;
-        b.events.onOutOfBounds.add(resetBullet, this);
 
     }
 
@@ -96,8 +95,13 @@ function fireBullet () {
         if (bullet)
         {
             bullet.reset(card.x + 50   , card.y +6);
-            bullet.body.velocity.x = 300;
+            bullet.body.velocity.x = 500;
             bulletTime = game.time.now + 150;
+            var reset = function(b){
+                resetBullet(b);
+                console.log(b.name);
+            };
+            game.time.events.add(Phaser.Timer.SECOND * 2, reset, this, bullet);
         }
     }
 
