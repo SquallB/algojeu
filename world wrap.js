@@ -5,11 +5,17 @@ function preload() {
 
     game.load.image('backdrop', 'TheEnd_by_Iloe_and_Made.jpg');
     game.load.image('card', 'thrust_ship.png');
+    game.load.image('bullet', 'bullet0.png');
 
 }
 
 var card;
 var cursors;
+var bullets;
+
+
+var bulletTime = 0;
+var bullet;
 
 function create() {
 
@@ -22,6 +28,24 @@ function create() {
     game.camera.follow(card);
 
     cursors = game.input.keyboard.createCursorKeys();
+    game.input.keyboard.addKeyCapture([ Phaser.Keyboard.SPACEBAR ]);
+
+    bullets = game.add.group();
+    bullets.enableBody = true;
+    bullets.physicsBodyType = Phaser.Physics.ARCADE;
+
+    for (var i = 0; i < 20; i++)
+    {
+        var b = bullets.create(0, 0, 'bullet');
+        b.name = 'bullet' + i;
+        b.angle = 90;
+        b.exists = false;
+        b.visible = false;
+        b.checkWorldBounds = true;
+        b.events.onOutOfBounds.add(resetBullet, this);
+
+    }
+
 
 }
 
@@ -45,7 +69,14 @@ function update() {
         card.y += 4;
     }
 
+    if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR))
+    {
+        fireBullet();
+    }
     game.world.wrap(card, 0, true);
+
+
+
 
 }
 
@@ -53,5 +84,28 @@ function render() {
 
     game.debug.cameraInfo(game.camera, 500, 32);
     game.debug.spriteCoords(card, 32, 32);
+
+}
+
+function fireBullet () {
+
+    if (game.time.now > bulletTime)
+    {
+        bullet = bullets.getFirstExists(false);
+
+        if (bullet)
+        {
+            bullet.reset(card.x + 50   , card.y +6);
+            bullet.body.velocity.x = 300;
+            bulletTime = game.time.now + 150;
+        }
+    }
+
+}
+
+//  Called if the bullet goes out of the screen
+function resetBullet (bullet) {
+
+    bullet.kill();
 
 }
