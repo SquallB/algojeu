@@ -4,12 +4,12 @@ var game = new Phaser.Game(800, 600, Phaser.CANVAS, 'phaser-example', { preload:
 function preload() {
 
     game.load.image('backdrop', 'TheEnd_by_Iloe_and_Made.jpg');
-    game.load.image('card', 'thrust_ship.png');
+    game.load.image('ship', 'thrust_ship.png');
     game.load.image('bullet', 'bullet0.png');
 
 }
 
-var card;
+var ship;
 var cursors;
 var bullets;
 
@@ -23,9 +23,10 @@ function create() {
 
     game.add.sprite(0, 0, 'backdrop');
 
-    card = game.add.sprite(200, 200, 'card');
+    ship = game.add.sprite(200, 200, 'ship');
+    game.physics.enable(ship, Phaser.Physics.ARCADE);
 
-    game.camera.follow(card);
+    game.camera.follow(ship);
 
     cursors = game.input.keyboard.createCursorKeys();
     game.input.keyboard.addKeyCapture([ Phaser.Keyboard.SPACEBAR ]);
@@ -50,29 +51,32 @@ function create() {
 
 function update() {
 
+    ship.body.velocity.x = 0;
+    ship.body.velocity.y = 0;
+
     if (cursors.left.isDown)
     {
-        card.x -= 4;
+        ship.body.velocity.x = -300;
     }
     else if (cursors.right.isDown)
     {
-        card.x += 4;
+        ship.body.velocity.x = 300;
     }
 
     if (cursors.up.isDown)
     {
-        card.y -= 4;
+        ship.body.velocity.y = -300;
     }
     else if (cursors.down.isDown)
     {
-        card.y += 4;
+        ship.body.velocity.y = 300;
     }
 
     if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR))
     {
         fireBullet();
     }
-    game.world.wrap(card, 0, true);
+    game.world.wrap(ship, 0, true);
 
 
 
@@ -82,7 +86,7 @@ function update() {
 function render() {
 
     game.debug.cameraInfo(game.camera, 500, 32);
-    game.debug.spriteCoords(card, 32, 32);
+    game.debug.spriteCoords(ship, 32, 32);
 
 }
 
@@ -94,7 +98,7 @@ function fireBullet () {
 
         if (bullet)
         {
-            bullet.reset(card.x + 50   , card.y +6);
+            bullet.reset(ship.x + 50   , ship.y +6);
             bullet.body.velocity.x = 500;
             bulletTime = game.time.now + 150;
             var reset = function(b){
