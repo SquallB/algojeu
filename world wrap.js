@@ -25,6 +25,10 @@ function create() {
     game.physics.enable(ship, Phaser.Physics.ARCADE);
     ship.body.collideWorldBounds = true;
 
+
+    this.lifeBar = new LifeBar(game);
+    this.lifeBar.display();
+
     cursors = game.input.keyboard.createCursorKeys();
     game.input.keyboard.addKeyCapture([ Phaser.Keyboard.SPACEBAR ]);
 
@@ -67,6 +71,8 @@ function update() {
 
     ship.body.velocity.x = 0;
     ship.body.velocity.y = 0;
+
+    this.lifeBar.life.updateCrop();
 
     if (cursors.left.isDown)
     {
