@@ -14,12 +14,13 @@ var cursors;
 var bullets;
 var bulletTime = 0;
 var bullet;
+var background;
 
 function create() {
 
     game.world.setBounds(0, 0, 1920, 600);
 
-    game.add.tileSprite(0, 0, 1200, 600, 'starfield');
+    background = game.add.tileSprite(0, 0, 1200, 600, 'starfield');
 
     ship = game.add.sprite(200, 200, 'ship');
     game.physics.enable(ship, Phaser.Physics.ARCADE);
@@ -65,14 +66,14 @@ function create() {
 
 function update() {
 
-    game.camera.x += 1;
+    background.tilePosition.x -= 2;
+
+    //game.camera.x += 1;
     game.physics.arcade.overlap(ship, enemies, shipCollisionHandler, null, this);
     game.physics.arcade.overlap(bullets, enemies, bulletsCollisionHandler, null, this);
 
     ship.body.velocity.x = 0;
     ship.body.velocity.y = 0;
-
-    this.lifeBar.life.updateCrop();
 
     if (cursors.left.isDown)
     {
