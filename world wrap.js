@@ -94,8 +94,7 @@ function update() {
 
 function render() {
 
-    game.debug.cameraInfo(game.camera, 500, 32);
-    game.debug.spriteCoords(ship, 32, 32);
+    
 
 }
 
