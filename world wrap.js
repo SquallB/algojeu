@@ -3,10 +3,10 @@ var game = new Phaser.Game(800, 600, Phaser.CANVAS, 'phaser-example', { preload:
 
 function preload() {
 
-    game.load.image('backdrop', 'TheEnd_by_Iloe_and_Made.jpg');
-    game.load.image('ship', 'thrust_ship.png');
-    game.load.image('bullet', 'bullet0.png');
-    game.load.image('invader', 'invader.png');
+    game.load.image('starfield', 'assets/starfield.png');
+    game.load.image('ship', 'assets/thrust_ship.png');
+    game.load.image('bullet', 'assets/bullet0.png');
+    game.load.image('invader', 'assets/invader.png');
 }
 
 var ship;
@@ -19,12 +19,11 @@ function create() {
 
     game.world.setBounds(0, 0, 1920, 600);
 
-    game.add.sprite(0, 0, 'backdrop');
+    game.add.tileSprite(0, 0, 1200, 600, 'starfield');
 
     ship = game.add.sprite(200, 200, 'ship');
     game.physics.enable(ship, Phaser.Physics.ARCADE);
-
-    game.camera.follow(ship);
+    ship.body.collideWorldBounds = true;
 
     cursors = game.input.keyboard.createCursorKeys();
     game.input.keyboard.addKeyCapture([ Phaser.Keyboard.SPACEBAR ]);
@@ -40,30 +39,31 @@ function create() {
         bullet.angle = 90;
         bullet.exists = false;
         bullet.visible = false;
-        bullet.checkWorldBounds = true;
 
     }
 
-    invaders = game.add.group();
-    invaders.enableBody = true;
-    invaders.physicsBodyType = Phaser.Physics.ARCADE;
+    enemies = game.add.group();
+    enemies.enableBody = true;
+    enemies.physicsBodyType = Phaser.Physics.ARCADE;
 
     for (var i = 0; i < 20; i++)
     {
-        var invader = invaders.create(0, 0, 'invader');
+        var invader = new Enemy(game, 0, 0, 'invader', 200, 3, 300, 1);
+        enemies.add(invader);
         invader.name = 'invader' + i;
         invader.exists = false;
         invader.visible = false;
         invader.reset(1900, 50 + i * 50);
-        invader.body.velocity.x = -200;
+        invader.body.velocity.x = -invader.getSpeed();
         invader.body.velocity.y = 0;
     }
 }
 
 function update() {
 
-    game.physics.arcade.collide(ship, invaders, shipCollisionHandler, null, this);
-    game.physics.arcade.collide(bullets, invaders, bulletsCollisionHandler, null, this);
+    game.camera.x += 1;
+    game.physics.arcade.overlap(ship, enemies, shipCollisionHandler, null, this);
+    game.physics.arcade.overlap(bullets, enemies, bulletsCollisionHandler, null, this);
 
     ship.body.velocity.x = 0;
     ship.body.velocity.y = 0;
@@ -90,7 +90,6 @@ function update() {
     {
         fireBullet();
     }
-    game.world.wrap(ship, 0, true);
 }
 
 function render() {
@@ -126,13 +125,19 @@ function resetBullet (bullet) {
 
 }
 
-//  Called if the bullet hits one of the invaders sprites
-function bulletsCollisionHandler (bullet, invader) {
+//  Called if the bullet hits one of the enemies sprites
+function bulletsCollisionHandler (bullet, enemy) {
     bullet.kill();
-    invader.kill();
+
+    var invaderLife = enemy.getLife();
+    invaderLife--;
+    enemy.setLife(invaderLife);
+
+    if(invaderLife <= 0) {
+        enemy.kill();
+    }
 }
 
-function shipCollisionHandler (ship, invader) {
-    console.log("ship collision");
-    invader.kill();
+function shipCollisionHandler (ship, enemy) {
+    enemy.kill();
 }
