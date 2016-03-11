@@ -11,11 +11,10 @@ function preload() {
 
 var ship;
 var cursors;
-var bullets;
-var bulletTime = 0;
 var bullet;
 var background;
 var weapon;
+var ennemies;
 
 function create() {
 
@@ -41,7 +40,7 @@ function create() {
 
     for (var i = 0; i < 20; i++)
     {
-        var invader = new Enemy(game, 0, 0, 'invader', 200, 3, 300, 1);
+        var invader = new Enemy(game, 0, 0, 'invader', new EnemyWeapon.SingleBullet(this.game), 150, 1);
         enemies.add(invader);
         invader.name = 'invader' + i;
         invader.exists = false;
@@ -84,6 +83,11 @@ function update() {
     {
         weapon.fire(ship);
     }
+
+    enemies.forEachAlive(function(enemy){
+        enemy.weapon.fire(enemy);
+        //game.physics.arcade.overlap(enemy.weapon, ship, bulletsCollisionHandler, null, this);
+    });
 }
 
 function render() {
