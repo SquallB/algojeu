@@ -45,7 +45,7 @@ function create() {
         invader.name = 'invader' + i;
         invader.exists = false;
         invader.visible = false;
-        invader.reset(1900, 50 + i * 50);
+        invader.reset(1900, 10 + i * 50);
         invader.body.velocity.x = -invader.speed;
         invader.body.velocity.y = 0;
     }

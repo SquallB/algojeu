@@ -28,8 +28,8 @@ EnemyWeapon.SingleBullet.prototype.fire = function (source) {
 
     if (this.game.time.time < this.nextFire) { return; }
 
-    var x = source.x - 15;
-    var y = source.y - 15;
+    var x = source.x - 8;
+    var y = source.y + 8;
 
     this.getFirstExists(false).fire(x, y, 0, -this.bulletSpeed, 0, 0);
 
