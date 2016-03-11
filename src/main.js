@@ -104,6 +104,6 @@ function bulletsCollisionHandler (bullet, enemy) {
 }
 
 function shipCollisionHandler (ship, enemy) {
-    this.lifeBar.life.updateCrop();
+    this.lifeBar.cropLife(20);
     enemy.kill();
 }
