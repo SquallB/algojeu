@@ -15,6 +15,7 @@ var bullet;
 var background;
 var weapon;
 var ennemies;
+var lifeBar;
 
 function create() {
 
@@ -26,8 +27,8 @@ function create() {
     game.physics.enable(ship, Phaser.Physics.ARCADE);
     ship.body.collideWorldBounds = true;
 
-    this.lifeBar = new LifeBar(game);
-    this.lifeBar.display();
+    lifeBar = new LifeBar(game);
+    lifeBar.display();
 
     cursors = game.input.keyboard.createCursorKeys();
     game.input.keyboard.addKeyCapture([ Phaser.Keyboard.SPACEBAR ]);
@@ -40,14 +41,10 @@ function create() {
 
     for (var i = 0; i < 20; i++)
     {
-        var invader = new Enemy(game, 0, 0, 'invader', new EnemyWeapon.SingleBullet(this.game), 150, 1);
+        var invader = new Enemy.Invader(game, 0, 0);
         enemies.add(invader);
-        invader.name = 'invader' + i;
-        invader.exists = false;
-        invader.visible = false;
-        invader.reset(1900, 10 + i * 50);
-        invader.body.velocity.x = -invader.speed;
-        invader.body.velocity.y = 0;
+        invader.reset(1200, 10 + i * 50)
+        invader.body.velocity.set(-invader.speed, 0);
     }
 }
 
@@ -86,7 +83,7 @@ function update() {
 
     enemies.forEachAlive(function(enemy){
         enemy.weapon.fire(enemy);
-        //game.physics.arcade.overlap(enemy.weapon, ship, bulletsCollisionHandler, null, this);
+        game.physics.arcade.overlap(enemy.weapon, ship, shipCollisionHandler, null, this);
     });
 }
 
@@ -97,7 +94,7 @@ function render() {
 }
 
 //  Called if the bullet hits one of the enemies sprites
-function bulletsCollisionHandler (bullet, enemy) {
+function bulletsCollisionHandler(bullet, enemy) {
     bullet.kill();
 
     enemy.life -= bullet.damage;
@@ -107,7 +104,7 @@ function bulletsCollisionHandler (bullet, enemy) {
     }
 }
 
-function shipCollisionHandler (ship, enemy) {
-    this.lifeBar.cropLife(20);
+function shipCollisionHandler(ship, enemy) {
+    lifeBar.cropLife(enemy.damage);
     enemy.kill();
 }

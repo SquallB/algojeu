@@ -1,11 +1,17 @@
-Enemy = function(game, posX, posY, spriteName, weapon, speed, life) {
-	Phaser.Sprite.call(this, game, posX, posY, spriteName);
+var Enemy = {};
 
-	this.weapon = weapon;
-	this.speed = speed || 0;
-	this.life = life || 1;
+Enemy.Invader = function(game, posX, posY) {
+	Phaser.Sprite.call(this, game, posX, posY, 'invader');
+
+	this.weapon = new EnemyWeapon.SingleBullet(this.game);
+	this.speed = 150;
+	this.life = 1;
 	this.firingTimer = 0;
+	this.damage = 20;
+
+	this.exists = false;
+    this.visible = false;
 }
 
-Enemy.prototype = Object.create(Phaser.Sprite.prototype);
-Enemy.prototype.constructor = Enemy;
+Enemy.Invader.prototype = Object.create(Phaser.Sprite.prototype);
+Enemy.Invader.prototype.constructor = Enemy;
