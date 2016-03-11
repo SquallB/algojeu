@@ -4,6 +4,7 @@ function LifeBar(gameModel){
   this.value = 100;
   this.fullHeathValue=100;
   this.lives = 3;
+
   this.game = gameModel;
   this.view = new LifeBarView();
 }
@@ -33,6 +34,10 @@ LifeBar.prototype.getLives = function(){
   return this.lives;
 }
 
+LifeBar.prototype.setLives = function(newCount){
+  this.lives = newCount;
+}
+
 LifeBar.prototype.display=function(){
     this.view.update(this);
 }
@@ -43,6 +48,13 @@ LifeBar.prototype.cropLife=function(damage){
     this.value -= damage;
   }else{
     this.value = 0;
+    this.setLives(this.getLives()-1);
+    if(this.getLives()>=0){
+      live = this.view.lives.getFirstAlive();
+      live.kill();
+      this.value = this.fullHeathValue;
+    }
+    
   }
   
   this.view.update(this);
@@ -92,7 +104,6 @@ LifeBarView.prototype.update= function(health){
         ship.alpha = 0.4;
     }
   }
-  
 }
 
 
