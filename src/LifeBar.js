@@ -73,7 +73,7 @@ LifeBarView = function(){
 
   this.bgRect= null;
   this.healthRect=null;
-
+  this.cropRect = null;
   this.lives=null;
 
   this.bgColor = '#00685e';
@@ -82,16 +82,30 @@ LifeBarView = function(){
 
 
 LifeBarView.prototype.update= function(health){
+
   this.bgWidth = health.getFullHealthValue() + 10;
   this.width = health.getValue();
 
-  this.bgRect = this.drawRect(0,0,this.bgWidth,this.bgHeight,this.bgWidth, health.getGame(),this.bgColor);
-  this.bgRect.fixedToCamera = true;
-  this.bgRect.anchor.set(0.5);
-
-  this.healthRect = this.drawRect(5,0,this.width+5,this.height,this.bgWidth/2, health.getGame(),this.healthColor);
-  this.healthRect.fixedToCamera = true;
-
+  if(this.bgRect == null){
+    this.bgRect = this.drawRect(0,0,this.bgWidth,this.bgHeight,this.bgWidth, health.getGame(),this.bgColor);
+    this.bgRect.fixedToCamera = true;
+    this.bgRect.anchor.set(0.5);
+    this.bgRect.alpha = 0.4;
+  }
+  
+  if(this.healthRect==null){
+    this.healthRect = this.drawRect(5,0,this.width+5,this.height,this.bgWidth/2, health.getGame(),this.healthColor);
+    this.healthRect.fixedToCamera = true;
+    this.healthRect.alpha = 0.4;
+    this.cropRect = new Phaser.Rectangle(0, 0, this.width+5, this.height);
+    this.healthRect.cropEnabled = true;
+    this.healthRect.crop(this.cropRect);
+  }else{
+    
+    health.getGame().add.tween(this.cropRect).to( { width: this.width }, 200, Phaser.Easing.Linear.None, true);
+    this.healthRect.updateCrop();
+  }
+  
   if(this.lives == null){
     this.lives = health.getGame().add.group();
 
