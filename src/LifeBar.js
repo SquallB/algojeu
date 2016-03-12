@@ -47,7 +47,7 @@ LifeBar.prototype.cropLife=function(damage){
   if(damage<this.value){
     this.value -= damage;
   }else{
-    this.value = 0;
+    
     this.setLives(this.getLives()-1);
     if(this.getLives()>=0){
       live = this.view.lives.getFirstAlive();
@@ -100,9 +100,10 @@ LifeBarView.prototype.update= function(health){
     this.cropRect = new Phaser.Rectangle(0, 0, this.width+5, this.height);
     this.healthRect.cropEnabled = true;
     this.healthRect.crop(this.cropRect);
+    this.healthRect.updateCrop();
   }else{
-    
-    health.getGame().add.tween(this.cropRect).to( { width: this.width }, 200, Phaser.Easing.Linear.None, true);
+    this.healthRect.updateCrop();
+    health.getGame().add.tween(this.cropRect).to( { width: this.width+5}, 200, Phaser.Easing.Linear.None, true);
     this.healthRect.updateCrop();
   }
   
