@@ -124,7 +124,7 @@ Weapon.EightWay = function (game) {
 
     this.nextFire = 0;
     this.bulletSpeed = 600;
-    this.fireRate = 100;
+    this.fireRate = 500;
 
     for (var i = 0; i < 96; i++)
     {

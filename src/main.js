@@ -7,6 +7,7 @@ function preload() {
     game.load.image('ship', 'assets/thrust_ship.png');
     game.load.image('bullet', 'assets/bullet0.png');
     game.load.image('invader', 'assets/invader.png');
+    game.load.spritesheet('kaboom', 'assets/explode.png', 128, 128);
 }
 
 var ship;
@@ -39,13 +40,30 @@ function create() {
     enemies.enableBody = true;
     enemies.physicsBodyType = Phaser.Physics.ARCADE;
 
+
+
     for (var i = 0; i < 20; i++)
     {
         var invader = new Enemy.Invader(game, 0, 0);
         enemies.add(invader);
         invader.reset(1200, 10 + i * 50)
         invader.body.velocity.set(-invader.speed, 0);
+
     }
+
+    explosions = game.add.group();
+    explosions.createMultiple(30, 'kaboom');
+    explosions.forEach(setupInvader, this);
+
+
+}
+
+function setupInvader (invader) {
+
+    invader.anchor.x = 0.5;
+    invader.anchor.y = 0.5;
+    invader.animations.add('kaboom');
+
 }
 
 function update() {
@@ -89,7 +107,7 @@ function update() {
 
 function render() {
 
-    
+
 
 }
 
@@ -100,11 +118,20 @@ function bulletsCollisionHandler(bullet, enemy) {
     enemy.life -= bullet.damage;
 
     if(enemy.life <= 0) {
+
+        var explosion = explosions.getFirstExists(false);
+        explosion.reset(enemy.body.x, enemy.body.y);
+        explosion.play('kaboom', 30, false, true);
+
+
         enemy.kill();
     }
 }
 
 function shipCollisionHandler(ship, enemy) {
     lifeBar.cropLife(enemy.damage);
+    var explosion = explosions.getFirstExists(false);
+    explosion.reset(enemy.body.x, enemy.body.y);
+    explosion.play('kaboom', 30, false, true);
     enemy.kill();
 }
