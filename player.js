@@ -1,8 +1,8 @@
-var Player = function (life, shield, fireDammage, fireType, speed){
+var Player = function(life, shield, fireDammage, fireType, speed) {
   this.life = life;
   if (shield > 0) {
     this.hasShield = true;
-  }else {
+  } else {
     this.hasShield = false;
   }
   this.shield = shield;
@@ -19,7 +19,7 @@ Player.prototype.setShield = function(shield) {
   this.shield = shield;
 };
 
-Player.prototype.setSpeed = function(speed){
+Player.prototype.setSpeed = function(speed) {
   this.speed = speed;
 };
 
@@ -27,11 +27,11 @@ Player.prototype.setFireDammage = function(fireDammage) {
   this.fireDammage = fireDammage;
 };
 
-Player.prototype.setFireType = function(fireType){
+Player.prototype.setFireType = function(fireType) {
   this.fireType = fireType;
 };
 
-Player.prototype.loseShield = function(){
+Player.prototype.loseShield = function() {
   this.hasShield = false;
   this.shield = 0;
 };
@@ -44,18 +44,18 @@ Player.prototype.getShield = function() {
   return this.shield;
 };
 
-Player.prototype.getSpeed = function(){
-  return this.speed ;
+Player.prototype.getSpeed = function() {
+  return this.speed;
 };
 
-Player.prototype.hasShield = function(){
+Player.prototype.hasShield = function() {
   return this.hasShield;
 };
 
 Player.prototype.getFireDammage = function() {
-  return this.fireDammage ;
+  return this.fireDammage;
 };
 
-Player.prototype.getFireType = function(){
+Player.prototype.getFireType = function() {
   return this.fireType;
 };
