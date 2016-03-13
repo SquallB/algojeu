@@ -1,72 +1,63 @@
 {
-  "propriety": "node",
-  "keyWord": "ET_SEMANTIQUE",
-  "children": [{
+  "numberRun" :"0",
+  "tree" : {
     "propriety": "node",
-    "keyWord": "ET",
+    "keyWord": "ET_SEMANTIQUE",
     "children": [{
-      "propriety": "leaf",
-      "objective": "survive",
-      "vague": {
-        "numberEnnemy": 3,
-        "positionY": ["10", "20", "60"],
-        "enemyDescription": {
-          "life": "10",
-          "speed": "100",
-          "weapon": {
-            "name": "Rockets",
-            "Speed": "300",
-            "Dammaged": "3"
+      "propriety": "node",
+      "keyWord": "ET",
+      "children": [{
+        "propriety": "leaf",
+        "objective": "survive",
+        "total_dammaged" : "0",
+        "vague": {
+          "numberEnnemy": 3,
+          "positionY": ["10", "20", "60"],
+          "enemyDescription": {
+            "life": "10",
+            "speed": "100",
+            "weapon": "Rockets"
           }
         }
-      }
+      }, {
+        "propriety": "leaf",
+        "objective": "get_token",
+        "token": {
+          "type": "Weapon",
+          "weapon": "Rockets"
+        }
+
+      }]
     }, {
       "propriety": "leaf",
-      "objective": "get_token",
-      "token": {
-        "tokenType": "Weapon",
-        "weapon": {
-          "name": "Rockets",
-          "Speed": "300",
-          "Dammaged": "3"
+      "objective": "kill_all",
+      "total_time_needed" : "0",
+      "vague": {
+        "numberEnnemy": 10,
+        "positionY": ["10", "20", "30", "40", "50", "60", "70", "80", "90", "100"],
+        "enemyDescription": {
+          "life": "2",
+          "speed": "400",
+          "weapon": "SingleBullet"
+        }
+      }
+
+    }, {
+
+      "propriety": "leaf",
+      "objective": "kill_all",
+      "total_time_needed" : "0",
+      "vague": {
+        "numberEnnemy": 1,
+        "positionY": ["60"],
+        "enemyDescription": {
+          "life": "50",
+          "speed": "5",
+          "weapon": "SingleBullet"
         }
       }
 
     }]
-  }, {
-    "propriety": "leaf",
-    "objective": "kill_all",
-    "vague": {
-      "numberEnnemy": 10,
-      "positionY": ["10", "20", "30", "40", "50", "60", "70", "80", "90", "100"],
-      "enemyDescription": {
-        "life": "2",
-        "speed": "400",
-        "weapon": {
-          "name": "SingleBullet",
-          "Speed": "600",
-          "Dammaged": "1"
-        }
-      }
-    }
+  }
 
-  }, {
-
-    "propriety": "leaf",
-    "objective": "kill_all",
-    "vague": {
-      "numberEnnemy": 1,
-      "positionY": ["60"],
-      "enemyDescription": {
-        "life": "50",
-        "speed": "5",
-        "weapon": {
-          "name": "SingleBullet",
-          "Speed": "200",
-          "Dammaged": "10"
-        }
-      }
-    }
-
-  }]
 }
