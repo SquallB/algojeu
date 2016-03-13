@@ -4,13 +4,14 @@ var Weapon = {};
 //  A single bullet is fired in front of the ship //
 ////////////////////////////////////////////////////
 
-Weapon.SingleBullet = function (game) {
+Weapon.SingleBullet = function (game, direction) {
 
     Phaser.Group.call(this, game, game.world, 'Single Bullet', false, true, Phaser.Physics.ARCADE);
 
     this.nextFire = 0;
     this.bulletSpeed = 600;
     this.fireRate = 100;
+    this.direction = direction || 1;
 
     for (var i = 0; i < 64; i++)
     {
@@ -28,10 +29,10 @@ Weapon.SingleBullet.prototype.fire = function (source) {
 
     if (this.game.time.time < this.nextFire) { return; }
 
-    var x = source.x + 15;
+    var x = source.x + 15 * this.direction;
     var y = source.y + 15;
 
-    this.getFirstExists(false).fire(x, y, 0, this.bulletSpeed, 0, 0);
+    this.getFirstExists(false).fire(x, y, 0, this.direction * this.bulletSpeed, 0, 0);
 
     this.nextFire = this.game.time.time + this.fireRate;
 

@@ -1,4 +1,4 @@
-var Token{};
+var Token = {};
 
 ///////////////////////////////////////////////
 /// TOKEN LIFE -> GIVE +1 LIFE IF LIFE < 3 ////
