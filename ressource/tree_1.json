@@ -14,6 +14,7 @@
           "numberEnnemy": 3,
           "positionY": ["10", "20", "60"],
           "enemyDescription": {
+            "name" : "invader",
             "life": "10",
             "speed": "100",
             "weapon": "Rockets"
@@ -31,11 +32,12 @@
     }, {
       "propriety": "leaf",
       "objective": "kill_all",
-      "total_time_needed" : "0",
+      "total_dammaged" : "0",
       "vague": {
         "numberEnnemy": 10,
         "positionY": ["10", "20", "30", "40", "50", "60", "70", "80", "90", "100"],
         "enemyDescription": {
+          "name" : "invader",
           "life": "2",
           "speed": "400",
           "weapon": "SingleBullet"
@@ -46,11 +48,12 @@
 
       "propriety": "leaf",
       "objective": "kill_all",
-      "total_time_needed" : "0",
+      "total_dammaged" : "0",
       "vague": {
         "numberEnnemy": 1,
         "positionY": ["60"],
         "enemyDescription": {
+          "name" : "boss",
           "life": "50",
           "speed": "5",
           "weapon": "SingleBullet"

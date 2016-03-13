@@ -8,6 +8,11 @@ function preload() {
     game.load.image('bullet', 'assets/bullet0.png');
     game.load.image('invader', 'assets/invader.png');
     game.load.spritesheet('kaboom', 'assets/explode.png', 128, 128);
+    game.load.image('TokenLife', 'assets/life.png');
+    game.load.image('TokenHealth', 'assets/health.png');
+    game.load.image('TokenShield', 'assets/shield.png');
+    game.load.image('TokenWeapon', 'assets/weapon.png');
+
 }
 
 var ship;

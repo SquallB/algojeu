@@ -1,7 +1,7 @@
 var Enemy = {};
 
 Enemy.Invader = function(game, posX, posY) {
-  Phaser.Sprite.call(this, game, posX, posY, 'invader');
+  Phaser.Sprite.call(this, game, posX, posY, 'TokenLife');
 
   this.weapon = new EnemyWeapon.SingleBullet(this.game);
   this.speed = 150;
