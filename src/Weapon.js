@@ -14,7 +14,7 @@ Weapon.SingleBullet = function (game) {
 
     for (var i = 0; i < 64; i++)
     {
-        this.add(new Bullet(game, 'bullet'), true);
+        this.add(new Bullet(game, 'bullet5'), true);
     }
 
     return this;

@@ -14,4 +14,4 @@ Enemy.Invader = function(game, posX, posY) {
 }
 
 Enemy.Invader.prototype = Object.create(Phaser.Sprite.prototype);
-Enemy.Invader.prototype.constructor = Enemy;
+Enemy.Invader.prototype.constructor = Enemy.Invader;
