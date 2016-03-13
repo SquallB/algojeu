@@ -44,15 +44,16 @@ LifeBar.prototype.display=function(){
 
 LifeBar.prototype.cropLife=function(damage){
 
-  if(damage<this.value){
-    this.value -= damage;
-  }else{
-    
+
+  this.value -= damage;
+  
+  if(this.value<=0){
+    this.value = this.getFullHealthValue();
     this.setLives(this.getLives()-1);
     if(this.getLives()>=0){
-      live = this.view.lives.getFirstAlive();
-      live.kill();
-      this.value = this.fullHeathValue;
+      this.lives = this.view.lives.getFirstAlive();
+      this.lives.kill();
+      
     }
     
   }
@@ -71,13 +72,17 @@ LifeBarView = function(){
   this.bgWidth = 0;
   this.bgHeight = 15;
 
+  this.healthGateMedium = 0xf1c40f;
+  this.healthGateLow = 0xff0000;
+  this.healthGateHigh = 0x00ff00;
   this.bgRect= null;
   this.healthRect=null;
   this.cropRect = null;
   this.lives=null;
 
   this.bgColor = '#00685e';
-  this.healthColor = '#00f910';
+  this.healthColor = '#ffffff';
+
 }
 
 
@@ -85,6 +90,19 @@ LifeBarView.prototype.update= function(health){
 
   this.bgWidth = health.getFullHealthValue() + 10;
   this.width = health.getValue();
+
+   if(this.lives == null){
+    this.lives = health.getGame().add.group();
+
+
+    for (var i = 0; i < health.getLives(); i++) 
+    {
+        var ship = this.lives.create(this.bgWidth/2 + 15+(30 * i), 40, 'ship');
+        ship.anchor.setTo(0.5, 0.5);
+        ship.angle = 90;
+        ship.alpha = 0.4;
+    }
+  }
 
   if(this.bgRect == null){
     this.bgRect = this.drawRect(0,0,this.bgWidth,this.bgHeight,this.bgWidth, health.getGame(),this.bgColor);
@@ -100,25 +118,32 @@ LifeBarView.prototype.update= function(health){
     this.cropRect = new Phaser.Rectangle(0, 0, this.width+5, this.height);
     this.healthRect.cropEnabled = true;
     this.healthRect.crop(this.cropRect);
-    this.healthRect.updateCrop();
-  }else{
-    this.healthRect.updateCrop();
-    health.getGame().add.tween(this.cropRect).to( { width: this.width+5}, 200, Phaser.Easing.Linear.None, true);
+    this.healthRect.tint = this.healthGateHigh;
     this.healthRect.updateCrop();
   }
+
+   
+    
+
+  this.healthRect.updateCrop();
+  health.getGame().add.tween(this.cropRect).to( { width: this.width+5}, 100, Phaser.Easing.Linear.None, true);
+  this.healthRect.updateCrop();
   
-  if(this.lives == null){
-    this.lives = health.getGame().add.group();
-
-
-    for (var i = 0; i < health.getLives(); i++) 
-    {
-        var ship = this.lives.create(this.bgWidth/2 + 15+(30 * i), 40, 'ship');
-        ship.anchor.setTo(0.5, 0.5);
-        ship.angle = 90;
-        ship.alpha = 0.4;
-    }
+  if(this.width <= health.getFullHealthValue()){
+  this.healthColor = this.healthGateHigh;
   }
+  if(this.width<health.getFullHealthValue()*0.8){
+    this.healthColor = this.healthGateMedium;
+  }
+
+  if(this.width<health.getFullHealthValue()*0.20){
+    this.healthColor = this.healthGateLow;
+  }
+  this.healthRect.tint = this.healthColor;
+  
+  
+
+ 
 }
 
 
