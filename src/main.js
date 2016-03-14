@@ -51,22 +51,18 @@ function create() {
     enemies.enableBody = true;
     enemies.physicsBodyType = Phaser.Physics.ARCADE;
 
-/*
-    for (var i = 0; i < 20; i++)
-
-    {
-        var invader = new Enemy.Invader(game, 0, 0);
-        enemies.add(invader);
-        invader.reset(1200, 10 + i * 50)
-        invader.body.velocity.set(-invader.speed, 0);
-
-    }*/
     var posY = [75,225,425];
     createKillAllWave(3,1,posY,150,'invader2',
-    '0','SingleBullet');
+    '0','ScaleBullet');
     var posY = [50,100,150,200,250,300,350,400,450,500,550];
     createKillAllWave(11,1,posY,150,'invader',
-    '1',"ScaleBullet");
+    '1',"SingleBullet");
+    var posY = [125,375,525];
+    createSurviveWave(3,1,posY,150,'invader2',
+    '0','Rockets');
+    var posY = [50,100,150,200,250,300,350,400,450,500,550];
+    createSurviveWave(11,1,posY,150,'invader',
+    '1',"SingleBullet");
 
     explosions = game.add.group();
     explosions.createMultiple(30, 'kaboom');
@@ -91,6 +87,20 @@ function createKillAllWave(numberEnnemy, life, positionY, speed, type,
 
     }
 }
+
+function createSurviveWave(numberEnnemy, life, positionY, speed, type,
+    numberWave, weapon) {
+
+        var positionX = 1200 + numberWave*50
+    for (var i=0; i<numberEnnemy; i++) {
+        var invader = new Enemy.Invader(game, positionX, positionY[i], life, speed,
+             type, weapon);
+        enemies.add(invader);
+        invader.body.velocity.set(-invader.speed,0);
+
+    }
+
+    }
 
 function setupInvader (invader) {
 
@@ -137,7 +147,7 @@ function update() {
     }
 
     enemies.forEachAlive(function(enemy){
-        enemy.weapon.fire(enemy);
+        enemy.weapon.fire(enemy,false);
         game.physics.arcade.overlap(enemy.weapon, player, playerCollisionHandler, null, this);
     });
 }
