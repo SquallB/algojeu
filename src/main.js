@@ -82,6 +82,7 @@ function createKillAllWave(numberEnnemy, life, positionY, speed, type,
     for (var i=0; i<numberEnnemy; i++) {
         var invader = new Enemy.Invader(game, positionX, positionY[i], life, speed,
              type, weapon);
+             invader.start();
         enemies.add(invader);
         //invader.body.velocity.set(-invader.speed,0);
 
@@ -95,6 +96,7 @@ function createSurviveWave(numberEnnemy, life, positionY, speed, type,
     for (var i=0; i<numberEnnemy; i++) {
         var invader = new Enemy.Invader(game, positionX, positionY[i], life, speed,
              type, weapon);
+             invader.start();
         enemies.add(invader);
         invader.body.velocity.set(-invader.speed,0);
 

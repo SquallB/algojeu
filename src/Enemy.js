@@ -11,9 +11,15 @@ Enemy.Invader = function(game, posX, posY, life, speed, type, weapon) {
   this.firingTimer = 0;
   this.damage = 20;
 
-  this.exists = true;
-  this.visible = true;
+  this.exists = false;
+  this.visible = false;
 }
 
 Enemy.Invader.prototype = Object.create(Phaser.Sprite.prototype);
 Enemy.Invader.prototype.constructor = Enemy.Invader;
+
+Enemy.Invader.prototype.start = function() {
+
+  this.exists = true;
+  this.visible = true;
+};
