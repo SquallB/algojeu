@@ -20,6 +20,10 @@ Enemy.Invader.prototype.constructor = Enemy.Invader;
 
 Enemy.Invader.prototype.start = function() {
 
-  this.exists = true;
-  this.visible = true;
+  var launchEnemie = function(){
+    this.exists = true;
+    this.visible = true;
+  };
+  this.game.time.events.add(Phaser.Timer.SECOND * 2, launchEnemie, this);
+
 };

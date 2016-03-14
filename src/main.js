@@ -149,8 +149,11 @@ function update() {
     }
 
     enemies.forEachAlive(function(enemy){
-        enemy.weapon.fire(enemy,false);
-        game.physics.arcade.overlap(enemy.weapon, player, playerCollisionHandler, null, this);
+        if (enemy.exists) {
+
+            enemy.weapon.fire(enemy,false);
+            game.physics.arcade.overlap(enemy.weapon, player, playerCollisionHandler, null, this);
+        }
     });
 }
 
