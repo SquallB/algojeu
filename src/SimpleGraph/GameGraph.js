@@ -1,6 +1,6 @@
 function GameGraph(){
-	this.nodeTypes = ["ET","ET//","OU","OU//","FIRST", "LAST" ,"NOT", "OPTIONAL"];
-	this.leafTypes = ["KILL","SURVIVE"];
+	this.nodeTypes = ["ET","ET//","OU","OU//","FIRST", "LAST" ,"OPTIONNAL","NOT"];
+	this.leafTypes = ["KILL","SURVIVE","GET_TOKEN"];
 }
 
 
@@ -9,8 +9,14 @@ GameGraph.prototype.generateGraph = function(nbNodes,game){
 	var gameTree = new SimpleGraph(true);
 
 	for (var i = 1; i <= nbNodes; i++) {
-		var rndType = game.rnd.integerInRange(0, this.nodeTypes.length);
+		var rndType = game.rnd.integerInRange(0, this.nodeTypes.length-1);
+		while((this.nodeTypes[rndType]==="OPTIONNAL" || this.nodeTypes[rndType]==="NOT")&& i===1){
+			rndType = game.rnd.integerInRange(0, this.nodeTypes.length-1);
+		}
+		
+
 		gameTree.addValuedNode(i,this.nodeTypes[rndType]);
+		
 
 	}
 	var rootNode = gameTree.getNode(1);
@@ -44,7 +50,7 @@ GameGraph.prototype.generateGraph = function(nbNodes,game){
 			var rndChilds = this.rndChildNumber(currentNode.getValue(),5);
 			for (var o = 1; o <= rndChilds; o++) {
 				var nextIndex = gameTree.getOrder()+1;
-				var rndType = game.rnd.integerInRange(0, this.leafTypes.length);
+				var rndType = game.rnd.integerInRange(0, this.leafTypes.length-1);
 				gameTree.addValuedNode(nextIndex,this.leafTypes[rndType]);
 				gameTree.addEdge(currentNode,gameTree.getNode(nextIndex));
 
@@ -58,7 +64,7 @@ GameGraph.prototype.generateGraph = function(nbNodes,game){
 
 GameGraph.prototype.rndChildNumber= function(type,maxNumber){
 	var rndChilds=0;
-	if(type === "ET"|| type==="OU" || type ==="OU//"){
+	if(type !== "NOT" && type!== "OPTIONNAL"){
 		rndChilds = game.rnd.integerInRange(2, maxNumber);
 
 	}else{
