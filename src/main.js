@@ -39,7 +39,9 @@ function create() {
 
     lifeBar = new LifeBar(game);
     lifeBar.display();
-
+    var gameGraph = new GameGraph();
+    
+    console.log(gameGraph.generateGraph(15,game));
     cursors = game.input.keyboard.createCursorKeys();
     game.input.keyboard.addKeyCapture([ Phaser.Keyboard.SPACEBAR ]);
 
