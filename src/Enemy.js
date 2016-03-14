@@ -3,7 +3,7 @@ var Enemy = {};
 Enemy.Invader = function(game, posX, posY) {
   Phaser.Sprite.call(this, game, posX, posY, 'invader');
 
-  this.weapon = new EnemyWeapon.SingleBullet(this.game);
+  this.weapon = createWeapon("SingleBullet", this.game, false);
   this.speed = 150;
   this.life = 1;
   this.firingTimer = 0;

@@ -1,16 +1,48 @@
+function createWeapon (weapon, game, isPlayer) {
+
+    var weaponUpperCase = weapon.toUpperCase();
+    var newWeapon;
+
+    if (weaponUpperCase === "SINGLEBULLET") {
+        newWeapon = new Weapon.SingleBullet(game, isPlayer);
+    }else if(weaponUpperCase === "FRONTANDBACK") {
+        newWeapon = new Weapon.FrontAndBack(game, isPlayer);
+    }else if (weaponUpperCase === "THREEWAY") {
+        newWeapon = new Weapon.ThreeWay(game, isPlayer);
+    }else if (weaponUpperCase === "EIGHTWAY") {
+        newWeapon = new Weapon.EightWay(game,isPlayer);
+    }else if (weaponUpperCase === "SCATTERSHOT") {
+        newWeapon = new Weapon.ScatterShot(game,isPlayer);
+    }else if (weaponUpperCase === "BEAM") {
+        newWeapon = new Weapon.Beam(game,isPlayer);
+    }else if (weaponUpperCase === "SPLITSHOT") {
+        newWeapon = new Weapon.SplitShot(game,isPlayer);
+    }else if (weaponUpperCase === "ROCKETS") {
+        newWeapon = new Weapon.Rockets(game,isPlayer);
+    }else if (weaponUpperCase === "SCALEBULLET") {
+        newWeapon = new Weapon.ScaleBullet(game,isPlayer);
+    }
+    return newWeapon;
+};
+
 var Weapon = {};
 
 ////////////////////////////////////////////////////
 //  A single bullet is fired in front of the ship //
 ////////////////////////////////////////////////////
 
-Weapon.SingleBullet = function (game) {
+Weapon.SingleBullet = function (game, isPlayer) {
 
     Phaser.Group.call(this, game, game.world, 'Single Bullet', false, true, Phaser.Physics.ARCADE);
 
     this.nextFire = 0;
     this.bulletSpeed = 600;
-    this.fireRate = 100;
+    if (isPlayer) {
+        this.fireRate = 100;
+    }else {
+        this.fireRate = 2000;
+    }
+
 
     for (var i = 0; i < 64; i++)
     {
@@ -24,14 +56,20 @@ Weapon.SingleBullet = function (game) {
 Weapon.SingleBullet.prototype = Object.create(Phaser.Group.prototype);
 Weapon.SingleBullet.prototype.constructor = Weapon.SingleBullet;
 
-Weapon.SingleBullet.prototype.fire = function (source) {
+Weapon.SingleBullet.prototype.fire = function (source, isPlayer) {
 
     if (this.game.time.time < this.nextFire) { return; }
 
-    var x = source.x + 15;
-    var y = source.y + 15;
+    if (isPlayer) {
 
-    this.getFirstExists(false).fire(x, y, 0, this.bulletSpeed, 0, 0);
+        var x = source.x + 15;
+        var y = source.y + 15;
+        this.getFirstExists(false).fire(x, y, 0, this.bulletSpeed, 0, 0);
+    }else {
+        var x = source.x - 8;
+        var y = source.y + 8
+        this.getFirstExists(false).fire(x, y, 0, -this.bulletSpeed, 0, 0);
+    }
 
     this.nextFire = this.game.time.time + this.fireRate;
 
@@ -41,13 +79,18 @@ Weapon.SingleBullet.prototype.fire = function (source) {
 //  A bullet is shot both in front and behind the ship //
 /////////////////////////////////////////////////////////
 
-Weapon.FrontAndBack = function (game) {
+Weapon.FrontAndBack = function (game, isPlayer) {
 
     Phaser.Group.call(this, game, game.world, 'Front And Back', false, true, Phaser.Physics.ARCADE);
 
     this.nextFire = 0;
     this.bulletSpeed = 600;
-    this.fireRate = 100;
+    if (isPlayer) {
+
+        this.fireRate = 100;
+    }else {
+        this.fireRate= 1000;
+    }
 
     for (var i = 0; i < 64; i++)
     {
@@ -61,11 +104,17 @@ Weapon.FrontAndBack = function (game) {
 Weapon.FrontAndBack.prototype = Object.create(Phaser.Group.prototype);
 Weapon.FrontAndBack.prototype.constructor = Weapon.FrontAndBack;
 
-Weapon.FrontAndBack.prototype.fire = function (source) {
+Weapon.FrontAndBack.prototype.fire = function (source, isPlayer) {
 
     if (this.game.time.time < this.nextFire) { return; }
 
-    var x = source.x + 10;
+    if(isPlayer) {
+
+        var x = source.x + 10;
+    }else {
+
+        var x = source.x - 10;
+    }
     var y = source.y + 10;
 
     this.getFirstExists(false).fire(x, y, 0, this.bulletSpeed, 0, 0);
@@ -79,13 +128,18 @@ Weapon.FrontAndBack.prototype.fire = function (source) {
 //  3-way Fire (directly above, below and in front) //
 //////////////////////////////////////////////////////
 
-Weapon.ThreeWay = function (game) {
+Weapon.ThreeWay = function (game, isPlayer) {
 
     Phaser.Group.call(this, game, game.world, 'Three Way', false, true, Phaser.Physics.ARCADE);
 
     this.nextFire = 0;
     this.bulletSpeed = 600;
-    this.fireRate = 100;
+    if (isPlayer) {
+
+        this.fireRate = 500;
+    }else {
+        this.fireRate= 2000;
+    }
 
     for (var i = 0; i < 96; i++)
     {
@@ -99,16 +153,25 @@ Weapon.ThreeWay = function (game) {
 Weapon.ThreeWay.prototype = Object.create(Phaser.Group.prototype);
 Weapon.ThreeWay.prototype.constructor = Weapon.ThreeWay;
 
-Weapon.ThreeWay.prototype.fire = function (source) {
+Weapon.ThreeWay.prototype.fire = function (source, isPlayer) {
 
     if (this.game.time.time < this.nextFire) { return; }
+    if (isPlayer) {
 
-    var x = source.x + 10;
-    var y = source.y + 10;
+        var x = source.x + 10;
+        var y = source.y + 10;
 
-    this.getFirstExists(false).fire(x, y, 270, this.bulletSpeed, 0, 0);
-    this.getFirstExists(false).fire(x, y, 0, this.bulletSpeed, 0, 0);
-    this.getFirstExists(false).fire(x, y, 90, this.bulletSpeed, 0, 0);
+        this.getFirstExists(false).fire(x, y, 270, this.bulletSpeed, 0, 0);
+        this.getFirstExists(false).fire(x, y, 0, this.bulletSpeed, 0, 0);
+        this.getFirstExists(false).fire(x, y, 90, this.bulletSpeed, 0, 0);
+    }else {
+        var x = source.x - 8;
+        var y = source.y + 8;
+
+        this.getFirstExists(false).fire(x, y, 90, -this.bulletSpeed, 0, 0);
+        this.getFirstExists(false).fire(x, y, 0, -this.bulletSpeed, 0, 0);
+        this.getFirstExists(false).fire(x, y, 270, -this.bulletSpeed, 0, 0);
+    }
 
     this.nextFire = this.game.time.time + this.fireRate;
 
@@ -118,13 +181,19 @@ Weapon.ThreeWay.prototype.fire = function (source) {
 //  8-way fire, from all sides of the ship //
 /////////////////////////////////////////////
 
-Weapon.EightWay = function (game) {
+Weapon.EightWay = function (game,isPlayer) {
 
     Phaser.Group.call(this, game, game.world, 'Eight Way', false, true, Phaser.Physics.ARCADE);
 
     this.nextFire = 0;
     this.bulletSpeed = 600;
-    this.fireRate = 500;
+    if(isPlayer) {
+
+        this.fireRate = 500;
+    }else {
+        this.fireRate = 1000;
+
+    }
 
     for (var i = 0; i < 96; i++)
     {
@@ -138,11 +207,16 @@ Weapon.EightWay = function (game) {
 Weapon.EightWay.prototype = Object.create(Phaser.Group.prototype);
 Weapon.EightWay.prototype.constructor = Weapon.EightWay;
 
-Weapon.EightWay.prototype.fire = function (source) {
+Weapon.EightWay.prototype.fire = function (source, isPlayer) {
 
     if (this.game.time.time < this.nextFire) { return; }
+    if (isPlayer){
+        var x = source.x + 16;
 
-    var x = source.x + 16;
+    }else {
+        var x = source.x - 8;
+
+    }
     var y = source.y + 10;
 
     this.getFirstExists(false).fire(x, y, 0, this.bulletSpeed, 0, 0);
@@ -162,13 +236,19 @@ Weapon.EightWay.prototype.fire = function (source) {
 //  Bullets are fired out scattered on the y axis //
 ////////////////////////////////////////////////////
 
-Weapon.ScatterShot = function (game) {
+Weapon.ScatterShot = function (game,isPlayer) {
 
     Phaser.Group.call(this, game, game.world, 'Scatter Shot', false, true, Phaser.Physics.ARCADE);
 
     this.nextFire = 0;
     this.bulletSpeed = 600;
-    this.fireRate = 40;
+    if(isPlayer) {
+
+        this.fireRate = 40;
+    }else {
+        this.fireRate = 100;
+
+    }
 
     for (var i = 0; i < 32; i++)
     {
@@ -182,14 +262,20 @@ Weapon.ScatterShot = function (game) {
 Weapon.ScatterShot.prototype = Object.create(Phaser.Group.prototype);
 Weapon.ScatterShot.prototype.constructor = Weapon.ScatterShot;
 
-Weapon.ScatterShot.prototype.fire = function (source) {
+Weapon.ScatterShot.prototype.fire = function (source, isPlayer) {
 
     if (this.game.time.time < this.nextFire) { return; }
 
     var x = source.x + 16;
     var y = (source.y + source.height / 2) + this.game.rnd.between(-10, 10);
 
+    if (isPlayer) {
     this.getFirstExists(false).fire(x, y, 0, this.bulletSpeed, 0, 0);
+
+    }else {
+
+        this.getFirstExists(false).fire(x, y, 0, -this.bulletSpeed, 0, 0);
+    }
 
     this.nextFire = this.game.time.time + this.fireRate;
 
@@ -205,7 +291,7 @@ Weapon.Beam = function (game) {
 
     this.nextFire = 0;
     this.bulletSpeed = 1000;
-    this.fireRate = 45;
+    this.fireRate = 90;
 
     for (var i = 0; i < 64; i++)
     {
@@ -219,14 +305,21 @@ Weapon.Beam = function (game) {
 Weapon.Beam.prototype = Object.create(Phaser.Group.prototype);
 Weapon.Beam.prototype.constructor = Weapon.Beam;
 
-Weapon.Beam.prototype.fire = function (source) {
+Weapon.Beam.prototype.fire = function (source, isPlayer) {
 
     if (this.game.time.time < this.nextFire) { return; }
 
-    var x = source.x + 40;
-    var y = source.y + 10;
 
-    this.getFirstExists(false).fire(x, y, 0, this.bulletSpeed, 0, 0);
+    if (isPlayer) {
+
+        var x = source.x + 40;
+        var y = source.y + 10;
+        this.getFirstExists(false).fire(x, y, 0, this.bulletSpeed, 0, 0);
+    }else {
+        var x = source.x - 40;
+        var y = source.y + 10;
+        this.getFirstExists(false).fire(x, y, 0, -this.bulletSpeed, 0, 0);
+    }
 
     this.nextFire = this.game.time.time + this.fireRate;
 
@@ -236,13 +329,18 @@ Weapon.Beam.prototype.fire = function (source) {
 //  A three-way fire where the top and bottom bullets bend on a path //
 ///////////////////////////////////////////////////////////////////////
 
-Weapon.SplitShot = function (game) {
+Weapon.SplitShot = function (game, isPlayer) {
 
     Phaser.Group.call(this, game, game.world, 'Split Shot', false, true, Phaser.Physics.ARCADE);
 
     this.nextFire = 0;
     this.bulletSpeed = 700;
-    this.fireRate = 40;
+    if (isPlayer) {
+        this.fireRate = 200;
+    }else {
+        this.fireRate = 400;
+    }
+
 
     for (var i = 0; i < 64; i++)
     {
@@ -256,81 +354,50 @@ Weapon.SplitShot = function (game) {
 Weapon.SplitShot.prototype = Object.create(Phaser.Group.prototype);
 Weapon.SplitShot.prototype.constructor = Weapon.SplitShot;
 
-Weapon.SplitShot.prototype.fire = function (source) {
+Weapon.SplitShot.prototype.fire = function (source, isPlayer) {
 
     if (this.game.time.time < this.nextFire) { return; }
+    if (isPlayer) {
+        var x = source.x + 20;
+        var y = source.y + 10;
 
-    var x = source.x + 20;
-    var y = source.y + 10;
+        this.getFirstExists(false).fire(x, y, 0, this.bulletSpeed, 0, -500);
+        this.getFirstExists(false).fire(x, y, 0, this.bulletSpeed, 0, 0);
+        this.getFirstExists(false).fire(x, y, 0, this.bulletSpeed, 0, 500);
 
-    this.getFirstExists(false).fire(x, y, 0, this.bulletSpeed, 0, -500);
-    this.getFirstExists(false).fire(x, y, 0, this.bulletSpeed, 0, 0);
-    this.getFirstExists(false).fire(x, y, 0, this.bulletSpeed, 0, 500);
+    }else {
+        var x = source.x - 15;
+        var y = source.y + 10;
+
+        this.getFirstExists(false).fire(x, y, 0, -this.bulletSpeed, 0, -500);
+        this.getFirstExists(false).fire(x, y, 0, -this.bulletSpeed, 0, 0);
+        this.getFirstExists(false).fire(x, y, 0, -this.bulletSpeed, 0, 500);
+
+
+    }
+
 
     this.nextFire = this.game.time.time + this.fireRate;
 
 };
 
-///////////////////////////////////////////////////////////////////////
-//  Bullets have Gravity.y set on a repeating pre-calculated pattern //
-///////////////////////////////////////////////////////////////////////
-
-Weapon.Pattern = function (game) {
-
-    Phaser.Group.call(this, game, game.world, 'Pattern', false, true, Phaser.Physics.ARCADE);
-
-    this.nextFire = 0;
-    this.bulletSpeed = 600;
-    this.fireRate = 40;
-
-    this.pattern = Phaser.ArrayUtils.numberArrayStep(-800, 800, 200);
-    this.pattern = this.pattern.concat(Phaser.ArrayUtils.numberArrayStep(800, -800, -200));
-
-    this.patternIndex = 0;
-
-    for (var i = 0; i < 64; i++)
-    {
-        this.add(new Bullet(game, 'bullet4'), true);
-    }
-
-    return this;
-
-};
-
-Weapon.Pattern.prototype = Object.create(Phaser.Group.prototype);
-Weapon.Pattern.prototype.constructor = Weapon.Pattern;
-
-Weapon.Pattern.prototype.fire = function (source) {
-
-    if (this.game.time.time < this.nextFire) { return; }
-
-    var x = source.x + 20;
-    var y = source.y + 10;
-
-    this.getFirstExists(false).fire(x, y, 0, this.bulletSpeed, 0, this.pattern[this.patternIndex]);
-
-    this.patternIndex++;
-
-    if (this.patternIndex === this.pattern.length)
-    {
-        this.patternIndex = 0;
-    }
-
-    this.nextFire = this.game.time.time + this.fireRate;
-
-};
 
 ///////////////////////////////////////////////////////////////////
 //  Rockets that visually track the direction they're heading in //
 ///////////////////////////////////////////////////////////////////
 
-Weapon.Rockets = function (game) {
+Weapon.Rockets = function (game, isPlayer) {
 
     Phaser.Group.call(this, game, game.world, 'Rockets', false, true, Phaser.Physics.ARCADE);
 
     this.nextFire = 0;
     this.bulletSpeed = 400;
-    this.fireRate = 250;
+    if(isPlayer) {
+        this.fireRate = 250;
+
+    }else {
+        this.fireRate = 700;
+    }
 
     for (var i = 0; i < 32; i++)
     {
@@ -346,15 +413,24 @@ Weapon.Rockets = function (game) {
 Weapon.Rockets.prototype = Object.create(Phaser.Group.prototype);
 Weapon.Rockets.prototype.constructor = Weapon.Rockets;
 
-Weapon.Rockets.prototype.fire = function (source) {
+Weapon.Rockets.prototype.fire = function (source, isPlayer) {
 
     if (this.game.time.time < this.nextFire) { return; }
 
-    var x = source.x + 10;
-    var y = source.y + 10;
+    if (isPlayer) {
+        var x = source.x + 10;
+        var y = source.y + 10;
 
-    this.getFirstExists(false).fire(x, y, 0, this.bulletSpeed, 0, -700);
-    this.getFirstExists(false).fire(x, y, 0, this.bulletSpeed, 0, 700);
+        this.getFirstExists(false).fire(x, y, 0, this.bulletSpeed, 0, -700);
+        this.getFirstExists(false).fire(x, y, 0, this.bulletSpeed, 0, 700);
+    }else {
+        var x = source.x - 10;
+        var y = source.y + 10;
+
+        this.getFirstExists(false).fire(x, y, 0, -this.bulletSpeed, 0, -700);
+        this.getFirstExists(false).fire(x, y, 0, -this.bulletSpeed, 0, 700);
+
+    }
 
     this.nextFire = this.game.time.time + this.fireRate;
 
@@ -364,13 +440,19 @@ Weapon.Rockets.prototype.fire = function (source) {
 //  A single bullet that scales in size as it moves across the screen //
 ////////////////////////////////////////////////////////////////////////
 
-Weapon.ScaleBullet = function (game) {
+Weapon.ScaleBullet = function (game,isPlayer) {
 
     Phaser.Group.call(this, game, game.world, 'Scale Bullet', false, true, Phaser.Physics.ARCADE);
 
     this.nextFire = 0;
     this.bulletSpeed = 800;
-    this.fireRate = 100;
+    if (isPlayer) {
+
+        this.fireRate = 500;
+    }else {
+
+        this.fireRate = 800;
+    }
 
     for (var i = 0; i < 32; i++)
     {
@@ -386,14 +468,21 @@ Weapon.ScaleBullet = function (game) {
 Weapon.ScaleBullet.prototype = Object.create(Phaser.Group.prototype);
 Weapon.ScaleBullet.prototype.constructor = Weapon.ScaleBullet;
 
-Weapon.ScaleBullet.prototype.fire = function (source) {
+Weapon.ScaleBullet.prototype.fire = function (source,isPlayer) {
 
     if (this.game.time.time < this.nextFire) { return; }
 
-    var x = source.x + 10;
     var y = source.y + 10;
+    if(isPlayer) {
 
-    this.getFirstExists(false).fire(x, y, 0, this.bulletSpeed, 0, 0);
+        var x = source.x + 10;
+        this.getFirstExists(false).fire(x, y, 0, this.bulletSpeed, 0, 0);
+    }else {
+        var x = source.x - 10;
+        this.getFirstExists(false).fire(x, y, 0, -this.bulletSpeed, 0, 0);
+
+    }
+
 
     this.nextFire = this.game.time.time + this.fireRate;
 
