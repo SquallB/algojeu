@@ -51,7 +51,7 @@ GameGraph.prototype.generateGraph = function(nbNodes,game){
 			}
 		}
 	}
-
+	this.displayTree(gameTree);
 	return gameTree;
 }
 
@@ -67,4 +67,6 @@ GameGraph.prototype.rndChildNumber= function(type,maxNumber){
 	return rndChilds;
 }
 
-
+GameGraph.prototype.displayTree = function(tree){
+	initializeInterfaceFor1Graph(tree, "levelTree", 2000, 0, 800);
+}
