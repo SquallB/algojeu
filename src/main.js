@@ -32,6 +32,7 @@ function create() {
     background = game.add.tileSprite(0, 0, 800, 600, 'starfield');
 
     player = new Player(game, 200, 200, new Weapon.SingleBullet(game, true));
+
     game.add.existing(player);
     game.physics.enable(player, Phaser.Physics.ARCADE);
     player.body.collideWorldBounds = true;
@@ -46,7 +47,6 @@ function create() {
     enemies = game.add.group();
     enemies.enableBody = true;
     enemies.physicsBodyType = Phaser.Physics.ARCADE;
-
 
     for (var i = 0; i < 20; i++)
 
@@ -110,12 +110,12 @@ function update() {
     {
 
         player.weapon.fire(player, true);
+
     }
 
     enemies.forEachAlive(function(enemy){
         enemy.weapon.fire(enemy);
         game.physics.arcade.overlap(enemy.weapon, player, playerCollisionHandler, null, this);
-
     });
 }
 
