@@ -1,23 +1,5 @@
-
 var game = new Phaser.Game(800, 600, Phaser.CANVAS, 'game', { preload: preload, create: create, update: update, render: render });
-
-function preload() {
-
-    game.load.image('starfield', 'assets/starfield.png');
-    game.load.image('ship', 'assets/thrust_ship.png');
-    game.load.image('invader', 'assets/invader.png');
-    game.load.image('invader2', 'assets/enemie1.png');
-    game.load.spritesheet('kaboom', 'assets/explode.png', 128, 128);
-    game.load.image('TokenLife', 'assets/life.png');
-    game.load.image('TokenHealth', 'assets/health.png');
-    game.load.image('TokenShield', 'assets/shield.png');
-    game.load.image('TokenWeapon', 'assets/weapon.png');
-    for (var i = 0; i <= 11; i++)
-    {
-        game.load.image('bullet' + i, 'assets/bullet' + i + '.png');
-    }
-}
-
+var numberWave = 0;
 var player;
 var cursors;
 var bullet;
@@ -25,8 +7,24 @@ var background;
 var enemies;
 var tokens;
 
-function create() {
+function preload() {
+    game.load.image('starfield', 'assets/starfield.png');
+    game.load.image('ship', 'assets/thrust_ship.png');
+    game.load.image('invader', 'assets/invader.png');
+    game.load.image('invader2', 'assets/enemie1.png');
+    game.load.image('boss', 'assets/enemie.png');
+    game.load.spritesheet('kaboom', 'assets/explode.png', 128, 128);
+    game.load.image('TokenLife', 'assets/life.png');
+    game.load.image('TokenHealth', 'assets/health.png');
+    game.load.image('TokenShield', 'assets/shield.png');
+    game.load.image('TokenWeapon', 'assets/weapon.png');
 
+    for (var i = 0; i <= 11; i++) {
+        game.load.image('bullet' + i, 'assets/bullet' + i + '.png');
+    }
+}
+
+function create() {
     game.world.setBounds(0, 0, 800, 600);
 
     background = game.add.tileSprite(0, 0, 800, 600, 'starfield');
@@ -48,18 +46,7 @@ function create() {
     enemies.enableBody = true;
     enemies.physicsBodyType = Phaser.Physics.ARCADE;
 
-    var posY = [75,225,425];
-    createKillAllWave(3,1,posY,150,'invader2',
-    '0','ScaleBullet');
-    var posY = [50,100,150,200,250,300,350,400,450,500,550];
-    createKillAllWave(11,1,posY,150,'invader',
-    '1',"SingleBullet");
-    var posY = [125,375,525];
-    createSurviveWave(3,1,posY,150,'invader2',
-    '0','Rockets');
-    var posY = [50,100,150,200,250,300,350,400,450,500,550];
-    createSurviveWave(11,1,posY,150,'invader',
-    '1',"SingleBullet");
+    loadLevel("tree_1");
 
     explosions = game.add.group();
     explosions.createMultiple(30, 'kaboom');
@@ -75,45 +62,13 @@ function create() {
     token.reset(300, 300);
 }
 
-function createKillAllWave(numberEnnemy, life, positionY, speed, type,
-    numberWave, weapon){
-
-        var positionX = 750 - numberWave*50
-    for (var i=0; i<numberEnnemy; i++) {
-        var invader = new Enemy.Invader(game, positionX, positionY[i], life, speed,
-             type, weapon);
-             invader.start();
-        enemies.add(invader);
-        //invader.body.velocity.set(-invader.speed,0);
-
-    }
-}
-
-function createSurviveWave(numberEnnemy, life, positionY, speed, type,
-    numberWave, weapon) {
-
-        var positionX = 1200 + numberWave*50
-    for (var i=0; i<numberEnnemy; i++) {
-        var invader = new Enemy.Invader(game, positionX, positionY[i], life, speed,
-             type, weapon);
-             invader.start();
-        enemies.add(invader);
-        invader.body.velocity.set(-invader.speed,0);
-
-    }
-
-    }
-
 function setupInvader (invader) {
-
     invader.anchor.x = 0.5;
     invader.anchor.y = 0.5;
     invader.animations.add('kaboom');
-
 }
 
 function update() {
-
     background.tilePosition.x -= 2;
 
     //game.camera.x += 1;
@@ -123,37 +78,27 @@ function update() {
 
     player.body.velocity.set(0);
 
-    if (cursors.left.isDown)
-    {
+    if (cursors.left.isDown) {
         player.body.velocity.x = -player.speed;
-    }
-    else if (cursors.right.isDown)
-    {
+    } else if (cursors.right.isDown) {
         player.body.velocity.x = player.speed;
     }
 
-    if (cursors.up.isDown)
-    {
+    if (cursors.up.isDown) {
         player.body.velocity.y = -player.speed;
-    }
-    else if (cursors.down.isDown)
-    {
+    } else if (cursors.down.isDown) {
         player.body.velocity.y = player.speed;
     }
 
-    if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR))
-    {
-
+    if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
         player.weapon.fire(player, true);
-
     }
 
-    enemies.forEachAlive(function(enemy){
+    enemies.forEachAlive(function(enemy) {
         if (enemy.exists) {
             if(enemy.firstAppreance) {
                 enemy.firstAppear();
-            }else {
-
+            } else {
                 enemy.weapon.fire(enemy,false);
                 game.physics.arcade.overlap(enemy.weapon, player, playerCollisionHandler, null, this);
             }
@@ -161,24 +106,17 @@ function update() {
     });
 }
 
-function render() {
-
-
-
-}
+function render() { }
 
 //  Called if the bullet hits one of the enemies sprites
 function bulletsCollisionHandler(bullet, enemy) {
     bullet.kill();
-
     enemy.life -= bullet.damage;
 
     if(enemy.life <= 0) {
-
         var explosion = explosions.getFirstExists(false);
         explosion.reset(enemy.body.x, enemy.body.y);
         explosion.play('kaboom', 30, false, true);
-
 
         enemy.kill();
     }
@@ -195,4 +133,57 @@ function playerCollisionHandler(player, enemy) {
 function tokenCollisionHandler(player, token) {
     token.useToken(player);
     token.kill();
+}
+
+function loadLevel(levelName) {
+    $.ajax({
+        async: false,
+        dataType: "json",
+        url: "ressource/" + levelName + ".json",
+        success: function(data) {
+            level = data;
+            loadChildrenNode(level.tree);
+        }
+    });
+}
+
+function loadChildrenNode(node) {
+    if(node.propriety === "node") {
+        if(node.keyWord === "ET_SEMANTIQUE" || node.keyWord === "OU_SEMANTIQUE") {
+            for (var i = 0; i < node.children.length; i++) {
+                loadChildrenNode(node.children[i]);
+            }
+        } else if(node.keyWord === "ET" || node.keyWord === "OU") {
+            for (var i = 0; i < node.children.length; i++) {
+                loadChildrenNode(node.children[i]);
+            }
+        }
+    } else if(node.propriety === "leaf") {
+        if(node.objective === "survive") {
+            createKillAllWave(node.vague);
+            numberWave++;
+        } else if(node.objective === "kill_all") {
+            createKillAllWave(node.vague);
+            numberWave++;
+        }
+    }
+}
+
+function createKillAllWave(vague) {
+    var positionX = 750 - numberWave * 50;
+    for (var i = 0; i < vague.numberEnemy; i++) {
+        var invader = new Enemy.Invader(game, positionX, vague.positionY[i], vague.enemyDescription.life, vague.enemyDescription.speed, vague.enemyDescription.type, vague.enemyDescription.weapon);
+        invader.start();
+        enemies.add(invader);
+    }
+}
+
+function createSurviveWave(vague) {
+    var positionX = 1200 + numberWave * 50;
+    for (var i = 0; i < vague.numberEnemy; i++) {
+        var invader = new Enemy.Invader(game, positionX, vague.positionY[i], vague.enemyDescription.life, vague.enemyDescription.speed, vague.enemyDescription.type, vague.enemyDescription.weapon);
+        invader.start();
+        enemies.add(invader);
+        invader.body.velocity.set(-invader.speed,0);
+    }
 }

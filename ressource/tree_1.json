@@ -11,12 +11,12 @@
         "objective": "survive",
         "total_dammaged" : "0",
         "vague": {
-          "numberEnnemy": 3,
-          "positionY": ["10", "20", "60"],
+          "numberEnemy": 3,
+          "positionY": [100, 300, 500],
           "enemyDescription": {
-            "name" : "invader",
-            "life": "10",
-            "speed": "100",
+            "type" : "invader",
+            "life": 10,
+            "speed": 100,
             "weapon": "Rockets"
           }
         }
@@ -34,12 +34,12 @@
       "objective": "kill_all",
       "total_dammaged" : "0",
       "vague": {
-        "numberEnnemy": 10,
-        "positionY": ["10", "20", "30", "40", "50", "60", "70", "80", "90", "100"],
+        "numberEnemy": 11,
+        "positionY": [50,100,150,200,250,300,350,400,450,500,550],
         "enemyDescription": {
-          "name" : "invader",
-          "life": "2",
-          "speed": "400",
+          "type" : "invader",
+          "life": 2,
+          "speed": 400,
           "weapon": "SingleBullet"
         }
       }
@@ -50,13 +50,13 @@
       "objective": "kill_all",
       "total_dammaged" : "0",
       "vague": {
-        "numberEnnemy": 1,
-        "positionY": ["60"],
+        "numberEnemy": 1,
+        "positionY": [300],
         "enemyDescription": {
-          "name" : "boss",
-          "life": "50",
-          "speed": "5",
-          "weapon": "SingleBullet"
+          "type" : "boss",
+          "life": 50,
+          "speed": 5,
+          "weapon": "ScaleBullet"
         }
       }
 
