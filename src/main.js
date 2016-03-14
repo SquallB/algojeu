@@ -23,7 +23,6 @@ var cursors;
 var bullet;
 var background;
 var enemies;
-var lifeBar;
 var tokens;
 
 function create() {
@@ -38,8 +37,6 @@ function create() {
     game.physics.enable(player, Phaser.Physics.ARCADE);
     player.body.collideWorldBounds = true;
 
-    lifeBar = new LifeBar(game);
-    lifeBar.display();
     var gameGraph = new GameGraph();
 
     console.log(gameGraph.generateGraph(15,game));
@@ -73,6 +70,9 @@ function create() {
     var token = new Token.Weapon(game, 100, 100, createWeapon('SplitShot', game, true));
     tokens.add(token);
     token.reset(100, 100);
+    token = new Token.Shield(game, 100, 100, 50);
+    tokens.add(token);
+    token.reset(300, 300);
 }
 
 function createKillAllWave(numberEnnemy, life, positionY, speed, type,
@@ -185,7 +185,7 @@ function bulletsCollisionHandler(bullet, enemy) {
 }
 
 function playerCollisionHandler(player, enemy) {
-    lifeBar.cropLife(enemy.damage);
+    player.lifeBar.changeLife(-enemy.damage);
     var explosion = explosions.getFirstExists(false);
     explosion.reset(enemy.body.x, enemy.body.y);
     explosion.play('kaboom', 30, false, true);

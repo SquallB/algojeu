@@ -2,8 +2,8 @@ var Player = function(game, posX, posY, weapon, life, shield, speed) {
   Phaser.Sprite.call(this, game, posX, posY, 'ship');
 
   this.weapon = weapon;
-  this.life = life || 100;
-  this.shield = shield || 0;
+  this.lifeBar = new LifeBar(game, life || 100);
+  this.lifeBar.shield = shield || 0;
   this.speed = speed || 300;
 };
 
@@ -11,11 +11,11 @@ Player.prototype = Object.create(Phaser.Sprite.prototype);
 Player.prototype.constructor = Player;
 
 Player.prototype.setLife = function(life) {
-  this.life = life;
+  this.lifebar.setValue(life);
 };
 
 Player.prototype.setShield = function(shield) {
-  this.shield = shield;
+  this.lifeBar.shield = shield;
 };
 
 Player.prototype.setSpeed = function(speed) {
@@ -26,16 +26,16 @@ Player.prototype.setWeapon = function(weapon) {
   this.weapon = weapon;
 };
 
-Player.prototype.loseShield = function() {
-  this.shield = 0;
+Player.prototype.loseLife = function() {
+  this.lifeBar.shield = 0;
 };
 
 Player.prototype.getLife = function() {
-  return this.life;
+  return this.lifeBar.value;
 };
 
 Player.prototype.getShield = function() {
-  return this.shield;
+  return this.lifeBar.shield;
 };
 
 Player.prototype.getSpeed = function() {
@@ -43,9 +43,13 @@ Player.prototype.getSpeed = function() {
 };
 
 Player.prototype.hasShield = function() {
-  return this.shield > 0;
+  return this.lifeBar.shield > 0;
 };
 
 Player.prototype.getWeapon = function() {
   return this.weapon;
+}
+
+Player.prototype.update = function() {
+  this.lifeBar.view.update(this.lifeBar);
 }

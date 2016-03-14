@@ -59,7 +59,7 @@ Token.Shield.prototype.constructor = Token.Shield;
 
 Token.Shield.prototype.useToken = function (player){
 
-  //TODO
+  player.setShield(player.getShield() + this.shield);
 
 };
 

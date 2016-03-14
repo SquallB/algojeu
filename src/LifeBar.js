@@ -1,9 +1,10 @@
 
 
-function LifeBar(gameModel){
-  this.value = 100;
-  this.fullHeathValue=100;
+function LifeBar(gameModel, value){
+  this.value = value;
+  this.fullHeathValue=value;
   this.lives = 3;
+  this.shield = 0;
 
   this.game = gameModel;
   this.view = new LifeBarView();
@@ -42,10 +43,22 @@ LifeBar.prototype.display=function(){
     this.view.update(this);
 }
 
-LifeBar.prototype.cropLife=function(damage){
+LifeBar.prototype.changeLife=function(modifier){
+  if(this.shield > 0 && modifier < 0) {
+    this.shield += modifier;
+    if(this.shield < 0) {
+      var leftover = this.shield;
+      this.shield = 0;
+      this.value += leftover;
+    }
+  }
+  else {
+    this.value += modifier;
+  }
 
-
-  this.value -= damage;
+  if(this.value > this.fullHeathValue) {
+    this.value = this.fullHeathValue;
+  }
   
   if(this.value<=0){
     this.value = this.getFullHealthValue();
@@ -60,8 +73,6 @@ LifeBar.prototype.cropLife=function(damage){
   
   this.view.update(this);
   
-  
-  
 }
 
 
@@ -71,6 +82,9 @@ LifeBarView = function(){
 
   this.bgWidth = 0;
   this.bgHeight = 15;
+
+  this.shieldWidth = 0;
+  this.shieldHeight = 10;
 
   this.healthGateMedium = 0xf1c40f;
   this.healthGateLow = 0xff0000;
@@ -82,6 +96,7 @@ LifeBarView = function(){
 
   this.bgColor = '#00685e';
   this.healthColor = '#ffffff';
+  this.shieldColor = '#0099ff';
 
 }
 
@@ -112,22 +127,38 @@ LifeBarView.prototype.update= function(health){
   }
   
   if(this.healthRect==null){
-    this.healthRect = this.drawRect(5,0,this.width+5,this.height,this.bgWidth/2, health.getGame(),this.healthColor);
+    this.healthRect = this.drawRect(5,0,this.bgWidth-5,this.height,this.bgWidth/2, health.getGame(),this.healthColor);
     this.healthRect.fixedToCamera = true;
     this.healthRect.alpha = 0.4;
     this.cropRect = new Phaser.Rectangle(0, 0, this.width+5, this.height);
     this.healthRect.cropEnabled = true;
     this.healthRect.crop(this.cropRect);
     this.healthRect.tint = this.healthGateHigh;
-    this.healthRect.updateCrop();
+  }
+
+  this.shieldWith = health.shield+5;
+  if(this.shieldWith > health.fullHeathValue + 5) {
+    this.shieldWith = health.fullHeathValue + 5;
+  }
+
+  if(this.shieldRect==null) {
+    
+    this.shieldRect = this.drawRect(5,0,this.bgWidth-5,this.height,this.bgWidth/2, health.getGame(),this.shieldColor);
+    this.shieldRect.fixedToCamera = true;
+    this.shieldRect.alpha = 0.4;
+    this.shieldCropRect = new Phaser.Rectangle(0, 0, this.shieldWith, this.height);
+    this.shieldRect.cropEnabled = true;
+    this.shieldRect.crop(this.shieldCropRect);
   }
 
    
     
 
-  this.healthRect.updateCrop();
   health.getGame().add.tween(this.cropRect).to( { width: this.width+5}, 100, Phaser.Easing.Linear.None, true);
   this.healthRect.updateCrop();
+
+  health.getGame().add.tween(this.shieldCropRect).to( { width: this.shieldWith}, 100, Phaser.Easing.Linear.None, true);
+  this.shieldRect.updateCrop();
   
   if(this.width <= health.getFullHealthValue()){
   this.healthColor = this.healthGateHigh;
