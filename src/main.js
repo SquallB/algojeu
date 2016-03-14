@@ -150,9 +150,13 @@ function update() {
 
     enemies.forEachAlive(function(enemy){
         if (enemy.exists) {
+            if(enemy.firstAppreance) {
+                enemy.firstAppear();
+            }else {
 
-            enemy.weapon.fire(enemy,false);
-            game.physics.arcade.overlap(enemy.weapon, player, playerCollisionHandler, null, this);
+                enemy.weapon.fire(enemy,false);
+                game.physics.arcade.overlap(enemy.weapon, player, playerCollisionHandler, null, this);
+            }
         }
     });
 }

@@ -13,6 +13,7 @@ Enemy.Invader = function(game, posX, posY, life, speed, type, weapon) {
 
   this.exists = false;
   this.visible = false;
+  this.firstAppreance = true;
 }
 
 Enemy.Invader.prototype = Object.create(Phaser.Sprite.prototype);
@@ -27,3 +28,12 @@ Enemy.Invader.prototype.start = function() {
   this.game.time.events.add(Phaser.Timer.SECOND * 2, launchEnemie, this);
 
 };
+Enemy.Invader.prototype.firstAppear = function() {
+
+  var setFirstAppear = function(){
+    this.firstAppreance = false;
+  }
+  if (this.firstAppear) {
+    this.game.time.events.add(Phaser.Timer.SECOND * 1, setFirstAppear, this);
+  }
+}
