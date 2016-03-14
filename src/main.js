@@ -6,6 +6,7 @@ function preload() {
     game.load.image('starfield', 'assets/starfield.png');
     game.load.image('ship', 'assets/thrust_ship.png');
     game.load.image('invader', 'assets/invader.png');
+    game.load.image('invader2', 'assets/enemie1.png');
     game.load.spritesheet('kaboom', 'assets/explode.png', 128, 128);
     game.load.image('TokenLife', 'assets/life.png');
     game.load.image('TokenHealth', 'assets/health.png');
@@ -40,7 +41,7 @@ function create() {
     lifeBar = new LifeBar(game);
     lifeBar.display();
     var gameGraph = new GameGraph();
-    
+
     console.log(gameGraph.generateGraph(15,game));
     cursors = game.input.keyboard.createCursorKeys();
     game.input.keyboard.addKeyCapture([ Phaser.Keyboard.SPACEBAR ]);
@@ -50,6 +51,7 @@ function create() {
     enemies.enableBody = true;
     enemies.physicsBodyType = Phaser.Physics.ARCADE;
 
+/*
     for (var i = 0; i < 20; i++)
 
     {
@@ -58,7 +60,13 @@ function create() {
         invader.reset(1200, 10 + i * 50)
         invader.body.velocity.set(-invader.speed, 0);
 
-    }
+    }*/
+    var posY = [75,225,425];
+    createKillAllWave(3,1,posY,150,'invader2',
+    '0','SingleBullet');
+    var posY = [50,100,150,200,250,300,350,400,450,500,550];
+    createKillAllWave(11,1,posY,150,'invader',
+    '1',"ScaleBullet");
 
     explosions = game.add.group();
     explosions.createMultiple(30, 'kaboom');
@@ -69,6 +77,19 @@ function create() {
     var token = new Token.Weapon(game, 100, 100, createWeapon('SplitShot', game, true));
     tokens.add(token);
     token.reset(100, 100);
+}
+
+function createKillAllWave(numberEnnemy, life, positionY, speed, type,
+    numberWave, weapon){
+
+        var positionX = 750 - numberWave*50
+    for (var i=0; i<numberEnnemy; i++) {
+        var invader = new Enemy.Invader(game, positionX, positionY[i], life, speed,
+             type, weapon);
+        enemies.add(invader);
+        //invader.body.velocity.set(-invader.speed,0);
+
+    }
 }
 
 function setupInvader (invader) {
