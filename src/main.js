@@ -66,7 +66,7 @@ function create() {
 
     tokens = game.add.group();
     tokens.enableBody = true;
-    var token = new Token.Health(game, 100, 100);
+    var token = new Token.Weapon(game, 100, 100, createWeapon('SplitShot', game, true));
     tokens.add(token);
     token.reset(100, 100);
 }
@@ -92,20 +92,20 @@ function update() {
 
     if (cursors.left.isDown)
     {
-        player.body.velocity.x = -300;
+        player.body.velocity.x = -player.speed;
     }
     else if (cursors.right.isDown)
     {
-        player.body.velocity.x = 300;
+        player.body.velocity.x = player.speed;
     }
 
     if (cursors.up.isDown)
     {
-        player.body.velocity.y = -300;
+        player.body.velocity.y = -player.speed;
     }
     else if (cursors.down.isDown)
     {
-        player.body.velocity.y = 300;
+        player.body.velocity.y = player.speed;
     }
 
     if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR))

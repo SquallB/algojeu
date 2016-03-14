@@ -81,6 +81,12 @@ Token.Weapon.prototype.constructor = Token.Weapon;
 
 Token.Weapon.prototype.useToken = function (player){
 
-  //TODO
+  var oldWeapon = player.weapon;
+  player.weapon = this.weapon;
+
+  var resetWeapon = function(player, oldWeapon){
+    player.weapon = oldWeapon
+  };
+  this.game.time.events.add(Phaser.Timer.SECOND * 4, resetWeapon, this, player, oldWeapon);
 
 };
