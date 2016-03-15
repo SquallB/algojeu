@@ -1,0 +1,61 @@
+{
+  "numberRun" :"0",
+  "tree" : {
+    "propriety": "node",
+    "keyWord": "ET_SEMANTIQUE",
+    "children": [{
+      "propriety": "leaf",
+      "objective": "survive",
+      "total_dammaged" : "0",
+      "vague": {
+        "numberEnemy": 3,
+        "positionY": [100, 300, 500],
+        "enemyDescription": {
+          "type" : "invader",
+          "life": 10,
+          "speed": 12,
+          "weapon": "Rockets"
+        }
+      }
+    }, {
+      "propriety": "leaf",
+      "objective": "kill_all",
+      "total_dammaged" : "0",
+      "vague": {
+        "numberEnemy": 11,
+        "positionY": [50,100,150,200,250,300,350,400,450,500,550],
+        "enemyDescription": {
+          "type" : "invader",
+          "life": 2,
+          "speed": 0,
+          "weapon": "SingleBullet"
+        }
+      }
+    }, {
+      "propriety": "node",
+      "keyWord": "ET",
+      "children": [{
+        "propriety": "leaf",
+        "objective": "kill_all",
+        "total_dammaged" : "0",
+        "vague": {
+          "numberEnemy": 1,
+          "positionY": [300],
+          "enemyDescription": {
+            "type" : "boss",
+            "life": 50,
+            "speed": 0,
+            "weapon": "ScaleBullet"
+          }
+        }
+      }, {
+        "propriety": "leaf",
+        "objective": "get_token",
+        "token": {
+          "type": "Shield",
+          "weapon": "none"
+        }
+      }]
+    }]
+  }
+}

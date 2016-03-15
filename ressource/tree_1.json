@@ -16,7 +16,7 @@
           "enemyDescription": {
             "type" : "invader",
             "life": 10,
-            "speed": 20,
+            "speed": 100,
             "weapon": "Rockets"
           }
         }
