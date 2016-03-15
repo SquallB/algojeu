@@ -39,7 +39,7 @@ function create() {
 
     var gameGraph = new GameGraph();
 
-    //console.log(gameGraph.generateGraph(5,game));
+    console.log(gameGraph.generateGraph(5,game));
     cursors = game.input.keyboard.createCursorKeys();
     game.input.keyboard.addKeyCapture([ Phaser.Keyboard.SPACEBAR ]);
 
@@ -65,7 +65,7 @@ function setupInvader (invader) {
 
 function update() {
 
-    //console.log("round: " + counter);
+    console.log("round: " + counter);
     //counter++;
     if(loadNode(level)) {
         console.log("LEVEL IS FINISHED ! CONGRATULATIONS !");
@@ -151,142 +151,161 @@ function loadLevel(levelName) {
 }
 
 function loadLeaf(node) {
-    if(node.objective === "survive") {
-        //console.log("createLeafSurvive");
+    var value = node.getValue();
+    if(value.objective === "survive") {
+        console.log("createLeafSurvive");
         numberWave++;
-        node.enemies = createSurviveWave(node.vague);
-    } else if(node.objective === "kill_all") {
-        //console.log("createLeafKillALL");
+        value.enemies = createSurviveWave(value.vague);
+    } else if(value.objective === "kill_all") {
+        console.log("createLeafKillALL");
         numberWave++;
-        node.enemies = createKillAllWave(node.vague);
-    } else if(node.objective === "get_token") {
-        //console.log("createLeafToken");
-        node.thetoken = createToken(node.token);
+        value.enemies = createKillAllWave(value.vague);
+    } else if(value.objective === "get_token") {
+        console.log("createLeafToken");
+        value.thetoken = createToken(value.token);
     }
 }
 
 function loadNode(node) {
-    //console.log(node);
-    if (node.statut === undefined) node.statut = false;
+    console.log(node);
+    var value = node.getValue();
+    if (value.statut === undefined) value.statut = false;
     if (isObjectiveFulfill(node)) return true;
 
-    if(node.propriety === "node") {
-        if(node.keyWord === "ET" || node.keyWord === "OU") {
-            //console.log("node: ET/OU");
-            //console.log(node);
-            loadChildrenNodeNonSemantique(node.children);
-        } else if(node.keyWord === "ET_SEMANTIQUE" || node.keyWord === "OU_SEMANTIQUE") {
-            //console.log("node: ET_SEMANTIQUE/OU_SEMANTIQUE");
-            for (var i = 0; i < node.children.length; i++) { 
-                //console.log("statut child " + i + " : " + node.children[i].statut);
-                if (isWaiting(node.children[i])) {
-                    if (isObjectiveFulfill(node.children[i])) node.children[i].statut = true;
-                    //console.log("node: waiting");
-                    //console.log(node.children[i]);
+    if(isLeaf(node)) {
+        loadLeaf(node);
+    } else {
+        if(value.type === "ET//" || value.type === "OU//") {
+            console.log("node: ET/OU");
+            console.log(node);
+            loadParallelNode(node);
+        } else if(value.type === "ET" || value.type === "OU") {
+            console.log("node: ET_SEMANTIQUE/OU_SEMANTIQUE");
+            var children = node.getNeighbors();
+            while (children.hasNext()) {
+                var currentChild = children.getNextNode();
+                var currentChildValue = currentChild.getValue();
+                console.log("statut child " + i + " : " + currentChildValue.statut);
+                if (isWaiting(currentChild)) {
+                    if (isObjectiveFulfill(currentChild)) currentChildValue.statut = true;
+                    console.log("node: waiting");
+                    console.log(currentChild);
                     return;
-                } else if (node.children[i].statut === undefined) {
-                    //console.log("node: undefined");
-                    //console.log(node.children[i]);
-                    node.children[i].statut = false;
-                    if(node.children[i].propriety === "node") {
-                        loadNode(node.children[i]);
-                    } else if(node.children[i].propriety === "leaf") {
-                        loadLeaf(node.children[i]);
+                } else if (currentChildValue.statut === undefined) {
+                    console.log("node: undefined");
+                    console.log(currentChild);
+                    currentChildValue.statut = false;
+                    if(isLeaf(node)) {
+                        loadLeaf(currentChild);
+                    } else {
+                        loadNode(currentChild);
                     }
                     return;
                 }
             }
         }
-    } else if(node.propriety === "leaf") {
-        loadLeaf(node);
-    }
+    } else 
 
     return false;
 }
 
-function isWaiting(node) {
-    return (node.statut !== undefined && !node.statut);
+function isLeaf(node) {
+    return (node.getDegree() === 0);
 }
 
-function isTrue(node) {
-    return (node.statut !== undefined && node.statut);
+function isWaiting(nodeValue) {
+    return (nodeValue.statut !== undefined && !nodeValue.statut);
+}
+
+function isTrue(nodeValue) {
+    return (nodeValue.statut !== undefined && nodeValue.statut);
 }
 
 function isObjectiveFulfill(node) {
-    //console.log("isObjectiveFulfill");
-    //console.log(node);
-    if(node.propriety === "node") {
-        return isObjectiveNodeFulfill(node);
-    } else if(node.propriety === "leaf") {
+    console.log("isObjectiveFulfill");
+    console.log(node);
+    if(isLeaf(node)) {
         return isObjectiveLeafFulfill(node);
+    } else {
+        return isObjectiveNodeFulfill(node);
     }
 }
 
 function isObjectiveNodeFulfill(node) {
-    //console.log("isObjectiveNodeFulfill");
-    //console.log(node);
-    if (isTrue(node)) return true;
-    if (node.statut === undefined) return false;
+    console.log("isObjectiveNodeFulfill");
+    console.log(node);
+    var value = node.getValue();
+    if (isTrue(value)) return true;
+    if (value === undefined) return false;
 
-    if (isWaiting(node)) {
-        if (node.keyWord === "ET" || node.keyWord === "ET_SEMANTIQUE") {
-            for (var i = 0; i < node.children.length; i++) {
-                if(!isObjectiveFulfill(node.children[i])) {
+    if (isWaiting(value)) {
+        if (value.type === "ET//" || value.type === "ET") {
+            var children = node.getNeighbors();
+            while (children.hasNext()) {
+                var currentChild = children.getNextNode();
+                if(!isObjectiveFulfill(currentChild)) {
                     return false;
                 }
             }
             
-            return (node.statut = true);
-        } else if (node.keyWord === "OU" || node.keyWord === "OU_SEMANTIQUE") {
+            return (value.statut = true);
+        } else if (value.type === "OU//" || value.type === "OU") {
             var nbTrue = 0;
-            for (var i = 0; i < node.children.length; i++) {
-                if(node.children[i].statut === undefined) {
+            var children = node.getNeighbors();
+            while (children.hasNext()) {
+                var currentChild = children.getNextNode();
+                var currentChildValue = currentChild.getValue();
+                if(currentChildValue.statut === undefined) {
                     return false;
-                } else if(isTrue(node.children[i])) {
+                } else if(isTrue(currentChildValue)) {
                     nbTrue++;
                 }
 
-                return (node.statut = (nbTrue > 0));
+                return (currentChildValue.statut = (nbTrue > 0));
             }
         }
     }
 }
 
 function isObjectiveLeafFulfill(leaf) {
-    //console.log("isObjectiveLeafFulfill");
-    //console.log("leaf:" + leaf.statut);
-    if (isTrue(leaf)) return true;
-    if (leaf.statut === undefined) return false;
+    console.log("isObjectiveLeafFulfill");
+    console.log("leaf:" + leaf.statut);
+    var value = leaf.getValue();
+    if (isTrue(value)) return true;
+    if (value.statut === undefined) return false;
 
-    if (leaf.objective === "kill_all" || leaf.objective === "survive") {
-        return (leaf.statut = areAllDeadOrGone(leaf.enemies));
-    } else if (leaf.objective === "get_token") {
-        //console.log('objective get_token');
-        //console.log(leaf);
-        return (leaf.statut = (leaf.thetoken !== undefined && !leaf.thetoken.exists && !leaf.thetoken.visible));
+    if (value.objective === "kill_all" || value.objective === "survive") {
+        return (value.statut = areAllDeadOrGone(value.enemies));
+    } else if (value.objective === "get_token") {
+        console.log('objective get_token');
+        console.log(leaf);
+        return (value.statut = (value.thetoken !== undefined && !value.thetoken.exists && !value.thetoken.visible));
     }
 }
 
-function loadChildrenNodeNonSemantique(children) {
-    for (var i = 0; i < children.length; i++) {
-        children[i].statut = false;
-        if(children[i].propriety === "node") {
-            loadNode(children[i]);
-        } else if(children[i].propriety === "leaf") {
-            loadLeaf(children[i]);
+function loadParallelNode(node) {
+    var children = node.getNeighbors();
+    while (children.hasNext()) {
+        var currentChild = children.getNextNode();
+        var currentChildValue = currentChild.getValue();
+        currentChildValue.statut = false;
+        if(isLeaf(currentChild)) {
+            loadLeaf(currentChild);
+        } else {
+            loadNode(currentChild);
         }
     }
 }
 
-function areAllDeadOrGone(arrayEnemies) {
-    for (var i = 0; i < arrayEnemies.length; i++) {
-        //console.log(arrayEnemies[i]);
-        if(arrayEnemies[i].position.x > 0 && arrayEnemies[i].life > 0) {
-            //console.log("arrayEnemies[" + i + "]: false");
+function areAllDeadOrGone(enemies) {
+    for (var i = 0; i < enemies.length; i++) {
+        console.log(enemies[i]);
+        if(enemies[i].position.x > 0 && enemies[i].life > 0) {
+            console.log("enemies[" + i + "]: false");
             return false;
         }
     }
-    //console.log("arrayEnemies: true");
+    console.log("enemies: true");
     return true;
 }
 
@@ -320,12 +339,14 @@ function createToken(token) {
     var posX = Math.floor((Math.random() * 700) + 50);
     var posY = Math.floor((Math.random() * 500) + 50);
 
-    if(token.type === "Weapon") {
-        thetoken = new Token.Weapon(game, posX, posY, createWeapon(token.weapon, game, true));
-    } else if (token.type === "Shield") {
-        thetoken = new Token.Shield(game, posX, posY, token.shield);
-    } else if (token.type === "Health") {
-        thetoken = new Token.Health(game, posX, posY, token.health);
+    if(token.type === "weapon") {
+        thetoken = new Token.Weapon(game, posX, posY, createWeapon(token.value, game, true));
+    } else if (token.type === "shield") {
+        thetoken = new Token.Shield(game, posX, posY, token.value);
+    } else if (token.type === "health") {
+        thetoken = new Token.Health(game, posX, posY, token.value);
+    } else if (token.type === "life") {
+        thetoken = new Token.Life(game, posX, posY);
     }
 
     tokens.add(thetoken);
