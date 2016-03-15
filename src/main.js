@@ -173,7 +173,6 @@ function loadNode(node) {
     if (value.statut === undefined) value.statut = false;
     if (isObjectiveFulfill(node)) return true;
 
-<<<<<<< HEAD
     if(isLeaf(node)) {
         loadLeaf(node);
     } else {
@@ -192,21 +191,6 @@ function loadNode(node) {
                     if (isObjectiveFulfill(currentChild)) currentChildValue.statut = true;
                     console.log("node: waiting");
                     console.log(currentChild);
-=======
-    if(node.propriety === "node") {
-        if(node.keyWord === "ET" || node.keyWord === "OU") {
-            //console.log("node: ET/OU");
-            //console.log(node);
-            loadChildrenNodeNonSemantique(node.children);
-        } else if(node.keyWord === "ET_SEMANTIQUE" || node.keyWord === "OU_SEMANTIQUE") {
-            //console.log("node: ET_SEMANTIQUE/OU_SEMANTIQUE");
-            for (var i = 0; i < node.children.length; i++) {
-                //console.log("statut child " + i + " : " + node.children[i].statut);
-                if (isWaiting(node.children[i])) {
-                    if (isObjectiveFulfill(node.children[i])) node.children[i].statut = true;
-                    //console.log("node: waiting");
-                    //console.log(node.children[i]);
->>>>>>> origin/master
                     return;
                 } else if (currentChildValue.statut === undefined) {
                     console.log("node: undefined");
@@ -264,15 +248,9 @@ function isObjectiveNodeFulfill(node) {
                     return false;
                 }
             }
-<<<<<<< HEAD
             
             return (value.statut = true);
         } else if (value.type === "OU//" || value.type === "OU") {
-=======
-
-            return (node.statut = true);
-        } else if (node.keyWord === "OU" || node.keyWord === "OU_SEMANTIQUE") {
->>>>>>> origin/master
             var nbTrue = 0;
             var children = node.getNeighbors();
             while (children.hasNext()) {
