@@ -131,6 +131,7 @@ function playerCollisionHandler(player, enemy) {
     var explosion = explosions.getFirstExists(false);
     explosion.reset(enemy.body.x, enemy.body.y);
     explosion.play('kaboom', 30, false, true);
+    enemy.life = 0;
     enemy.kill();
 }
 
@@ -177,7 +178,7 @@ function loadNode(node) {
             loadChildrenNodeNonSemantique(node.children);
         } else if(node.keyWord === "ET_SEMANTIQUE" || node.keyWord === "OU_SEMANTIQUE") {
             //console.log("node: ET_SEMANTIQUE/OU_SEMANTIQUE");
-            for (var i = 0; i < node.children.length; i++) { 
+            for (var i = 0; i < node.children.length; i++) {
                 //console.log("statut child " + i + " : " + node.children[i].statut);
                 if (isWaiting(node.children[i])) {
                     if (isObjectiveFulfill(node.children[i])) node.children[i].statut = true;
@@ -235,7 +236,7 @@ function isObjectiveNodeFulfill(node) {
                     return false;
                 }
             }
-            
+
             return (node.statut = true);
         } else if (node.keyWord === "OU" || node.keyWord === "OU_SEMANTIQUE") {
             var nbTrue = 0;

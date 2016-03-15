@@ -59,22 +59,22 @@ LifeBar.prototype.changeLife=function(modifier){
   if(this.value > this.fullHeathValue) {
     this.value = this.fullHeathValue;
   }
-  
+
   if(this.value <= 0) {
     if(this.getLives() > 0) {
       this.setLives(this.getLives() - 1);
       this.value = this.getFullHealthValue();
       var lifeView = this.view.lives.getFirstAlive();
-      lifeView.kill();
+      lifeView.kill();    
     }
     else {
       this.value = 0;
     }
-    
+
   }
-  
+
   this.view.update(this);
-  
+
 }
 
 
@@ -112,7 +112,7 @@ LifeBarView.prototype.update= function(health){
     this.lives = health.getGame().add.group();
 
 
-    for (var i = 0; i < health.getLives(); i++) 
+    for (var i = 0; i < health.getLives(); i++)
     {
         var ship = this.lives.create(this.bgWidth/2 + 15+(30 * i), 40, 'ship');
         ship.anchor.setTo(0.5, 0.5);
@@ -127,7 +127,7 @@ LifeBarView.prototype.update= function(health){
     this.bgRect.anchor.set(0.5);
     this.bgRect.alpha = 0.4;
   }
-  
+
   if(this.healthRect==null){
     this.healthRect = this.drawRect(5,0,this.bgWidth-5,this.height,this.bgWidth/2, health.getGame(),this.healthColor);
     this.healthRect.fixedToCamera = true;
@@ -144,7 +144,7 @@ LifeBarView.prototype.update= function(health){
   }
 
   if(this.shieldRect==null) {
-    
+
     this.shieldRect = this.drawRect(5,0,this.bgWidth-5,this.height,this.bgWidth/2, health.getGame(),this.shieldColor);
     this.shieldRect.fixedToCamera = true;
     this.shieldRect.alpha = 0.4;
@@ -153,17 +153,17 @@ LifeBarView.prototype.update= function(health){
     this.shieldRect.crop(this.shieldCropRect);
   }
 
-   
-    
+
+
 
   health.getGame().add.tween(this.cropRect).to( { width: this.width+5}, 100, Phaser.Easing.Linear.None, true);
   this.healthRect.updateCrop();
 
   health.getGame().add.tween(this.shieldCropRect).to( { width: this.shieldWith}, 100, Phaser.Easing.Linear.None, true);
   this.shieldRect.updateCrop();
-  
-  if(this.width <= health.getFullHealthValue()){
-  this.healthColor = this.healthGateHigh;
+
+  if(this.width >= health.getFullHealthValue()*0.8){
+    this.healthColor = this.healthGateHigh;
   }
   if(this.width<health.getFullHealthValue()*0.8){
     this.healthColor = this.healthGateMedium;
@@ -173,10 +173,10 @@ LifeBarView.prototype.update= function(health){
     this.healthColor = this.healthGateLow;
   }
   this.healthRect.tint = this.healthColor;
-  
-  
 
- 
+
+
+
 }
 
 
