@@ -57,7 +57,7 @@ Token.Shield.prototype.constructor = Token.Shield;
 
 Token.Shield.prototype.useToken = function (player){
 
-  player.setShield(player.getShield() + this.shield);
+  player.setShield(player.getShield() + player.lifeBar.getFullHealthValue() * this.shield);
 
 };
 

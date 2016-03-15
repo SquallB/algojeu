@@ -277,8 +277,8 @@ Weapon.ScatterShot.prototype.fire = function (source, isPlayer) {
     var y = (source.y + source.height / 2) + this.game.rnd.between(-10, 10);
 
     if (isPlayer) {
-    this.getFirstExists(false).fire(x, y, 0, this.bulletSpeed, 0, 0);
-    var x = source.x + 16;
+        var x = source.x + 16;
+        this.getFirstExists(false).fire(x, y, 0, this.bulletSpeed, 0, 0);
 
     }else {
         var x = source.x - 16;
