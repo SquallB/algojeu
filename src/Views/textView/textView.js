@@ -94,7 +94,7 @@ textView.prototype.initializeTextView = function()
             //Initilisation du div correspond au noeud, en lui ajoutant un identifiant pour le div,son id, à quel modèle il appartient et un attribut "tab".
             //Dont le rôle de l'attribu "tab" permet d'affecter un certain nombres de tabulations en html (Grâce au mot-clé &nbsp;) & ses fils.
             var divRootForeign = $('<div></div>');
-            $(divRootForeign).addClass(''+nodeForeign.getId()+'').attr('tab', 0).attr('idTextView', idTextView).addClass("nodeTextView").attr("modele", modele.getNameGraph()).html(nodeForeign.getId()+" :"+nodeForeign.getValue());
+            $(divRootForeign).addClass(''+nodeForeign.getId()+'').attr('tab', 0).attr('idTextView', idTextView).addClass("nodeTextView").attr("modele", modele.getNameGraph()).html(nodeForeign.getId()+" :"+nodeForeign.getValue().type);
             $(divRootForeign).css("color", "#F9FCFC");
 
             $(this.getDivTextView()).append(divRootForeign);
@@ -138,8 +138,8 @@ textView.prototype.initializeTextView = function()
                     htmlDivNeighbor=divNeighor.html();
 
                     //Affiche de la valeur du noeud.
-                    $(divNeighor).html(htmlDivNeighbor+''+neighbor.getId()+' :'+neighbor.getValue());
-
+                    $(divNeighor).html(htmlDivNeighbor+''+neighbor.getId()+' :'+neighbor.getValue().type);
+                    
                     //Si le voisins n'a jamais était visité, on l'insère dans la pile et on le marque.
                     if(neighbor.getVisitTextView() === undefined || neighbor.getVisitTextView() ===null || neighbor.getVisitTextView() === false) 
                     {
@@ -188,9 +188,9 @@ textView.prototype.initializeTable = function(graph)
         var node = this.getGraph().getNode(i);
         var value = undefined;
 
-        if(node.getValue() != undefined)
+        if(node.getValue().type != undefined)
         {
-            value = node.getValue();
+            value = node.getValue().type;
         }
 
         var tr = $("<tr></tr>");

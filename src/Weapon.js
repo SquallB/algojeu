@@ -39,6 +39,7 @@ Weapon.SingleBullet = function (game, isPlayer) {
 
     this.nextFire = 0;
     this.bulletSpeed = 600;
+    this.dammage = 1;
 
     if (isPlayer) {
         this.fireRate = 100;
@@ -48,7 +49,7 @@ Weapon.SingleBullet = function (game, isPlayer) {
 
     for (var i = 0; i < 64; i++)
     {
-        this.add(new Bullet(game, 'bullet5'), true);
+        this.add(new Bullet(game, 'bullet5', this.dammage), true);
     }
 
     return this;
@@ -71,7 +72,7 @@ Weapon.SingleBullet.prototype.fire = function (source, isPlayer) {
     }else {
         var x = source.x - 8;
         var y = source.y + 8
-        this.getFirstExists(false).fire(x, y, 0, -this.bulletSpeed, 0, 0);
+        this.getFirstExists(false).fire(x, y, 180, this.bulletSpeed,0, 0);
     }
 
     this.nextFire = this.game.time.time + this.fireRate;
@@ -88,6 +89,7 @@ Weapon.FrontAndBack = function (game, isPlayer) {
 
     this.nextFire = 0;
     this.bulletSpeed = 600;
+    this.dammage = 1;
     if (isPlayer) {
 
         this.fireRate = 100;
@@ -97,7 +99,7 @@ Weapon.FrontAndBack = function (game, isPlayer) {
 
     for (var i = 0; i < 64; i++)
     {
-        this.add(new Bullet(game, 'bullet5'), true);
+        this.add(new Bullet(game, 'bullet5', this.dammage), true);
     }
 
     return this;
@@ -137,6 +139,7 @@ Weapon.ThreeWay = function (game, isPlayer) {
 
     this.nextFire = 0;
     this.bulletSpeed = 600;
+    this.dammage = 3;
     if (isPlayer) {
 
         this.fireRate = 500;
@@ -146,7 +149,7 @@ Weapon.ThreeWay = function (game, isPlayer) {
 
     for (var i = 0; i < 96; i++)
     {
-        this.add(new Bullet(game, 'bullet7'), true);
+        this.add(new Bullet(game, 'bullet7', this.dammage), true);
     }
 
     return this;
@@ -190,6 +193,7 @@ Weapon.EightWay = function (game,isPlayer) {
 
     this.nextFire = 0;
     this.bulletSpeed = 600;
+    this.dammage=1;
     if(isPlayer) {
 
         this.fireRate = 500;
@@ -200,7 +204,7 @@ Weapon.EightWay = function (game,isPlayer) {
 
     for (var i = 0; i < 96; i++)
     {
-        this.add(new Bullet(game, 'bullet5'), true);
+        this.add(new Bullet(game, 'bullet5', this.dammage), true);
     }
 
     return this;
@@ -245,6 +249,7 @@ Weapon.ScatterShot = function (game,isPlayer) {
 
     this.nextFire = 0;
     this.bulletSpeed = 600;
+    this.dammage =1;
     if(isPlayer) {
 
         this.fireRate = 40;
@@ -255,7 +260,7 @@ Weapon.ScatterShot = function (game,isPlayer) {
 
     for (var i = 0; i < 32; i++)
     {
-        this.add(new Bullet(game, 'bullet5'), true);
+        this.add(new Bullet(game, 'bullet5', this.dammage), true);
     }
 
     return this;
@@ -269,15 +274,16 @@ Weapon.ScatterShot.prototype.fire = function (source, isPlayer) {
 
     if (this.game.time.time < this.nextFire) { return; }
 
-    var x = source.x + 16;
     var y = (source.y + source.height / 2) + this.game.rnd.between(-10, 10);
 
     if (isPlayer) {
     this.getFirstExists(false).fire(x, y, 0, this.bulletSpeed, 0, 0);
+    var x = source.x + 16;
 
     }else {
+        var x = source.x - 16;
 
-        this.getFirstExists(false).fire(x, y, 0, -this.bulletSpeed, 0, 0);
+        this.getFirstExists(false).fire(x, y, 180, this.bulletSpeed, 0, 0);
     }
 
     this.nextFire = this.game.time.time + this.fireRate;
@@ -295,10 +301,11 @@ Weapon.Beam = function (game) {
     this.nextFire = 0;
     this.bulletSpeed = 1000;
     this.fireRate = 90;
+    this.dammage =2;
 
     for (var i = 0; i < 64; i++)
     {
-        this.add(new Bullet(game, 'bullet11'), true);
+        this.add(new Bullet(game, 'bullet11', this.dammage), true);
     }
 
     return this;
@@ -338,6 +345,7 @@ Weapon.SplitShot = function (game, isPlayer) {
 
     this.nextFire = 0;
     this.bulletSpeed = 700;
+    this.dammage = 4;
     if (isPlayer) {
         this.fireRate = 200;
     }else {
@@ -347,7 +355,7 @@ Weapon.SplitShot = function (game, isPlayer) {
 
     for (var i = 0; i < 64; i++)
     {
-        this.add(new Bullet(game, 'bullet8'), true);
+        this.add(new Bullet(game, 'bullet8', this.dammage), true);
     }
 
     return this;
@@ -372,9 +380,9 @@ Weapon.SplitShot.prototype.fire = function (source, isPlayer) {
         var x = source.x - 15;
         var y = source.y + 10;
 
-        this.getFirstExists(false).fire(x, y, 0, -this.bulletSpeed, 0, -500);
-        this.getFirstExists(false).fire(x, y, 0, -this.bulletSpeed, 0, 0);
-        this.getFirstExists(false).fire(x, y, 0, -this.bulletSpeed, 0, 500);
+        this.getFirstExists(false).fire(x, y, 180, this.bulletSpeed, 0, -500);
+        this.getFirstExists(false).fire(x, y, 180, this.bulletSpeed, 0, 0);
+        this.getFirstExists(false).fire(x, y, 180, this.bulletSpeed, 0, 500);
 
 
     }
@@ -395,6 +403,7 @@ Weapon.Rockets = function (game, isPlayer) {
 
     this.nextFire = 0;
     this.bulletSpeed = 400;
+    this.dammage = 6;
     if(isPlayer) {
         this.fireRate = 250;
 
@@ -404,7 +413,7 @@ Weapon.Rockets = function (game, isPlayer) {
 
     for (var i = 0; i < 32; i++)
     {
-        this.add(new Bullet(game, 'bullet10'), true);
+        this.add(new Bullet(game, 'bullet10', this.dammage), true);
     }
 
     this.setAll('tracking', true);
@@ -449,6 +458,7 @@ Weapon.ScaleBullet = function (game,isPlayer) {
 
     this.nextFire = 0;
     this.bulletSpeed = 800;
+    this.dammage =5;
     if (isPlayer) {
 
         this.fireRate = 500;
@@ -459,7 +469,7 @@ Weapon.ScaleBullet = function (game,isPlayer) {
 
     for (var i = 0; i < 32; i++)
     {
-        this.add(new Bullet(game, 'bullet9'), true);
+        this.add(new Bullet(game, 'bullet9', this.dammage), true);
     }
 
     this.setAll('scaleSpeed', 0.05);
@@ -482,7 +492,7 @@ Weapon.ScaleBullet.prototype.fire = function (source,isPlayer) {
         this.getFirstExists(false).fire(x, y, 0, this.bulletSpeed, 0, 0);
     }else {
         var x = source.x - 10;
-        this.getFirstExists(false).fire(x, y, 0, -this.bulletSpeed, 0, 0);
+        this.getFirstExists(false).fire(x, y, 180, this.bulletSpeed, 0, 0);
 
     }
 

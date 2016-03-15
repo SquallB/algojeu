@@ -10,8 +10,12 @@ var Player = function(game, posX, posY, weapon, life, shield, speed) {
 Player.prototype = Object.create(Phaser.Sprite.prototype);
 Player.prototype.constructor = Player;
 
+Player.prototype.addLife = function() {
+  this.lifeBar.addLife();
+}
+
 Player.prototype.setLife = function(life) {
-  this.lifebar.setValue(life);
+  this.lifeBar.setValue(life);
 };
 
 Player.prototype.setShield = function(shield) {

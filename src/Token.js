@@ -16,9 +16,7 @@ Token.Life.prototype.constructor = Token.Life;
 
 Token.Life.prototype.useToken = function (player){
 
-  if (player.getLife < 3) {
-    player.setLife(player.getLife + 1);
-  }
+    player.addLife();
 };
 
 ///////////////////////////////////////////////
@@ -38,7 +36,7 @@ Token.Health.prototype.constructor = Token.Health;
 
 Token.Health.prototype.useToken = function (player){
 
-  //TODO
+  player.setLife(player.lifeBar.getFullHealthValue());
 
 };
 
@@ -87,6 +85,6 @@ Token.Weapon.prototype.useToken = function (player){
   var resetWeapon = function(player, oldWeapon){
     player.weapon = oldWeapon
   };
-  this.game.time.events.add(Phaser.Timer.SECOND * 4, resetWeapon, this, player, oldWeapon);
+  this.game.time.events.add(Phaser.Timer.SECOND * 6, resetWeapon, this, player, oldWeapon);
 
 };

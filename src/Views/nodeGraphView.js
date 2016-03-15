@@ -268,7 +268,15 @@ function nodeGraphView (node, depthGiven, Raph, thisViewGiven, xMarginGiven, yMa
 
         if(!this.exist(this.getRect()))
         {
-            this.createText(this.getValue());
+            this.createText(this.getValue().type);
+            if(this.getValue().statut===undefined){
+                this.fillAttr = "Blue";
+
+            }else if(this.getValue().statut){
+                this.fillAttr = "Yellow";
+            }else{
+                this.fillAttr = "Green";
+            }
         }
 
         this.getText().attr({x: xGiven + this.getTextBBox().width/2+xMargin, y: yGiven +yMargin+this.getTextBBox().height/2});

@@ -118,6 +118,14 @@ SimpleGraph.prototype.getNode = function(idGiven)
 	return this.getMatrixNodeWithId(idGiven);
 }
 
+
+SimpleGraph.prototype.getRoot = function(){
+	
+	return this.getMatrixNodeWithId(1);
+}
+
+
+
 SimpleGraph.prototype.removeNode = function (node)
 {
 	if(!this.isNode(node))
