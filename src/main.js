@@ -39,7 +39,7 @@ function create() {
 
     var gameGraph = new GameGraph();
 
-    //console.log(gameGraph.generateGraph(5,game));
+    console.log(gameGraph.generateGraph(5,game));
     cursors = game.input.keyboard.createCursorKeys();
     game.input.keyboard.addKeyCapture([ Phaser.Keyboard.SPACEBAR ]);
 
