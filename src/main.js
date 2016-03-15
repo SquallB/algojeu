@@ -331,5 +331,10 @@ function createToken(token) {
 
     tokens.add(thetoken);
     thetoken.reset(posX, posY);
+    var deleteToken = function(token){
+
+        token.kill();
+    }
+    this.game.time.events.add(Phaser.Timer.SECOND * 15, deleteToken, this, thetoken);
     return thetoken;
 }
