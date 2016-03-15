@@ -60,13 +60,15 @@ LifeBar.prototype.changeLife=function(modifier){
     this.value = this.fullHeathValue;
   }
   
-  if(this.value<=0){
-    this.value = this.getFullHealthValue();
-    this.setLives(this.getLives()-1);
-    if(this.getLives()>=0){
-      this.lives = this.view.lives.getFirstAlive();
-      this.lives.kill();
-      
+  if(this.value <= 0) {
+    if(this.getLives() > 0) {
+      this.setLives(this.getLives() - 1);
+      this.value = this.getFullHealthValue();
+      var lifeView = this.view.lives.getFirstAlive();
+      lifeView.kill();
+    }
+    else {
+      this.value = 0;
     }
     
   }
