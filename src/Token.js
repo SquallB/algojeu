@@ -16,9 +16,7 @@ Token.Life.prototype.constructor = Token.Life;
 
 Token.Life.prototype.useToken = function (player){
 
-  if (player.getLife < 3) {
-    player.setLife(player.getLife + 1);
-  }
+    player.addLife();
 };
 
 ///////////////////////////////////////////////
@@ -38,10 +36,7 @@ Token.Health.prototype.constructor = Token.Health;
 
 Token.Health.prototype.useToken = function (player){
 
-if(player.LifeBar == null) {
-  console.log("null");
-}
-  player.setLife(player.LifeBar.getFullHealthValue());
+  player.setLife(player.lifeBar.getFullHealthValue());
 
 };
 

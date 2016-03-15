@@ -39,8 +39,16 @@ LifeBar.prototype.setLives = function(newCount){
   this.lives = newCount;
 }
 
-LifeBar.prototype.display=function(){
+LifeBar.prototype.display = function(){
     this.view.update(this);
+}
+
+LifeBar.prototype.addLife = function() {
+  this.lives++;
+  this.lives.create(this.bgWidth/2 + 15+(30 * this.lives), 40, 'ship');
+  ship.anchor.setTo(0.5, 0.5);
+  ship.angle = 90;
+  ship.alpha = 0.4;
 }
 
 LifeBar.prototype.changeLife=function(modifier){

@@ -9,7 +9,7 @@ Enemy.Invader = function(game, posX, posY, life, speed, type, weapon) {
   this.speed = speed;
   this.life = life;
   this.firingTimer = 0;
-  this.damage = 20;
+  this.damage = life * 5;
 
   this.exists = false;
   this.visible = false;
