@@ -53,7 +53,7 @@
         "objective": "get_token",
         "token": {
           "type": "Shield",
-          "weapon": "none"
+          "shield": 10
         }
       }]
     }]

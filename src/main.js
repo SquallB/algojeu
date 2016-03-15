@@ -323,9 +323,9 @@ function createToken(token) {
     if(token.type === "Weapon") {
         thetoken = new Token.Weapon(game, posX, posY, createWeapon(token.weapon, game, true));
     } else if (token.type === "Shield") {
-        new Token.Shield(game, posX, posY, 50);
+        thetoken = new Token.Shield(game, posX, posY, token.shield);
     } else if (token.type === "Health") {
-        new Token.Health(game, posX, posY, 50);
+        thetoken = new Token.Health(game, posX, posY, token.health);
     }
 
     tokens.add(thetoken);
