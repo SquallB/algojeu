@@ -16,7 +16,7 @@
           "enemyDescription": {
             "type" : "invader",
             "life": 10,
-            "speed": 100,
+            "speed": 20,
             "weapon": "Rockets"
           }
         }
@@ -39,7 +39,7 @@
         "enemyDescription": {
           "type" : "invader",
           "life": 2,
-          "speed": 400,
+          "speed": 0,
           "weapon": "SingleBullet"
         }
       }
@@ -55,7 +55,7 @@
         "enemyDescription": {
           "type" : "boss",
           "life": 50,
-          "speed": 5,
+          "speed": 0,
           "weapon": "ScaleBullet"
         }
       }

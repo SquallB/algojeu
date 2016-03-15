@@ -1,11 +1,12 @@
 var game = new Phaser.Game(800, 600, Phaser.CANVAS, 'game', { preload: preload, create: create, update: update, render: render });
-var numberWave = 0;
+var numberWave = -1;
 var player;
 var cursors;
 var bullet;
 var background;
 var enemies;
 var tokens;
+var level;
 
 function preload() {
     game.load.image('starfield', 'assets/starfield.png');
@@ -41,7 +42,6 @@ function create() {
     cursors = game.input.keyboard.createCursorKeys();
     game.input.keyboard.addKeyCapture([ Phaser.Keyboard.SPACEBAR ]);
 
-
     enemies = game.add.group();
     enemies.enableBody = true;
     enemies.physicsBodyType = Phaser.Physics.ARCADE;
@@ -54,12 +54,6 @@ function create() {
 
     tokens = game.add.group();
     tokens.enableBody = true;
-    var token = new Token.Weapon(game, 100, 100, createWeapon('SplitShot', game, true));
-    tokens.add(token);
-    token.reset(100, 100);
-    token = new Token.Shield(game, 100, 100, 50);
-    tokens.add(token);
-    token.reset(300, 300);
 }
 
 function setupInvader (invader) {
@@ -69,6 +63,9 @@ function setupInvader (invader) {
 }
 
 function update() {
+
+    loadNode(level);
+    alert(enemies);
     background.tilePosition.x -= 2;
 
     //game.camera.x += 1;
@@ -141,49 +138,158 @@ function loadLevel(levelName) {
         dataType: "json",
         url: "ressource/" + levelName + ".json",
         success: function(data) {
-            level = data;
-            loadChildrenNode(level.tree);
+            level = data.tree;
         }
     });
 }
 
-function loadChildrenNode(node) {
+function loadLeaf(node) {
+    if(node.objective === "survive") {
+        numberWave++;
+        node.enemies = createSurviveWave(node.vague);
+    } else if(node.objective === "kill_all") {
+        numberWave++;
+        node.enemies = createKillAllWave(node.vague);
+    } else if(node.objective === "get_token") {
+        node.thetoken = createToken(node.token);
+    }
+}
+
+function loadNode(node) {
     if(node.propriety === "node") {
-        if(node.keyWord === "ET_SEMANTIQUE" || node.keyWord === "OU_SEMANTIQUE") {
-            for (var i = 0; i < node.children.length; i++) {
-                loadChildrenNode(node.children[i]);
-            }
-        } else if(node.keyWord === "ET" || node.keyWord === "OU") {
-            for (var i = 0; i < node.children.length; i++) {
-                loadChildrenNode(node.children[i]);
+        if(node.keyWord === "ET" || node.keyWord === "OU") {
+            loadChildrenNodeNonSemantique(node.children);
+        } else if(node.keyWord === "ET_SEMANTIQUE" || node.keyWord === "OU_SEMANTIQUE") {
+            for (var i = 0; i < node.children.length; i++) { 
+                if (node.children[i].statut === undefined) {
+                    node.children[i].statut = false;
+                    if(node.children[i].propriety === "node") {
+                        loadNode(node.children[i]);
+                    } else if(node.children[i].propriety === "leaf") {
+                        loadLeaf(node.children[i]);
+                    }
+                    return;
+                } else if (isWaiting(node.children[i]) && isObjectiveFulfill(node.children[i])) {
+                    node.children[i].statut = true;
+                }
             }
         }
     } else if(node.propriety === "leaf") {
-        if(node.objective === "survive") {
-            createKillAllWave(node.vague);
-            numberWave++;
-        } else if(node.objective === "kill_all") {
-            createKillAllWave(node.vague);
-            numberWave++;
+        loadLeaf(node);
+    }
+}
+
+function isWaiting(node) {
+    return (node.statut !== undefined && !node.statut);
+}
+
+function isTrue(node) {
+    return (node.statut !== undefined && node.statut);
+}
+
+function isObjectiveFulfill(node) {
+    if(node.propriety === "node") {
+        return isObjectiveNodeFulfill(node);
+    } else if(node.propriety === "leaf") {
+        return isObjectiveLeafFulfill(node);
+    }
+}
+
+function isObjectiveNodeFulfill(node) {
+    if (isTrue(node)) return true;
+    if (node.statut === undefined) return false;
+
+    if (isWaiting(node)) {
+        if (node.keyWord === "ET" || node.keyWord === "ET_SEMANTIQUE") {
+            for (var i = 0; i < node.children.length; i++) {
+                if(node.children[i].statut === undefined || isWaiting(node.children[i])) {
+                    return false;
+                }
+            }
+            node.statut = true;
+            return true;
+        } else if (node.keyWord === "OU" || node.keyWord === "OU_SEMANTIQUE") {
+            var nbTrue = 0;
+            for (var i = 0; i < node.children.length; i++) {
+                if(node.children[i].statut === undefined) {
+                    return false;
+                } else if(isTrue(node.children[i])) {
+                    nbTrue++;
+                }
+                return nbTrue;
+            }
         }
     }
 }
 
+function isObjectiveLeafFulfill(leaf) {
+    if (isTrue(leaf)) return true;
+    if (leaf.statut === undefined) return false;
+
+    if (leaf.objective === "kill_all" || leaf.objective === "survive") {
+        return areAllDeadOrGone(leaf.enemies);
+    } else if (leaf.objective === "get_token") {
+        return (leaf.thetoken !== undefined && leaf.thetoken.exists === false && leaf.thetoken.visible === false);
+    }
+}
+
+function loadChildrenNodeNonSemantique(children) {
+    for (var i = 0; i < children.length; i++) {
+        if(children[i].propriety === "node") {
+            loadNode(children[i]);
+        } else if(children[i].propriety === "leaf") {
+            loadLeaf(children[i]);
+        }
+    }
+}
+
+function areAllDeadOrGone(arrayEnemies) {
+    for (var i = 0; i < arrayEnemies.length; i++) {
+        if(arrayEnemies[i].position.x > 0 || arrayEnemies[i].life > 0) {
+            return false;
+        }
+    }
+    return true;
+}
+
 function createKillAllWave(vague) {
+    var vagueEnemy = [];
     var positionX = 750 - numberWave * 50;
     for (var i = 0; i < vague.numberEnemy; i++) {
         var invader = new Enemy.Invader(game, positionX, vague.positionY[i], vague.enemyDescription.life, vague.enemyDescription.speed, vague.enemyDescription.type, vague.enemyDescription.weapon);
         invader.start();
         enemies.add(invader);
+        vagueEnemy[i] = invader;
     }
+    return vagueEnemy;
 }
 
 function createSurviveWave(vague) {
-    var positionX = 1200 + numberWave * 50;
+    var vagueEnemy = [];
+    var positionX = 800 + numberWave * 50;
     for (var i = 0; i < vague.numberEnemy; i++) {
         var invader = new Enemy.Invader(game, positionX, vague.positionY[i], vague.enemyDescription.life, vague.enemyDescription.speed, vague.enemyDescription.type, vague.enemyDescription.weapon);
         invader.start();
         enemies.add(invader);
-        invader.body.velocity.set(-invader.speed,0);
+        invader.body.velocity.set(-invader.speed, 0);
     }
+    return vagueEnemy;
+}
+
+function createToken(token) {
+    var thetoken;
+    var posX = Math.floor((Math.random() * 700) + 50);
+    var posY = Math.floor((Math.random() * 500) + 50);
+
+    if(token.type === "Weapon") {
+        thetoken = new Token.Weapon(game, posX, posY, createWeapon(token.weapon, game, true));
+    } else if (token.type === "Shield") {
+        new Token.Shield(game, posX, posY, 50);
+    } else if (token.type === "Health") {
+        new Token.Health(game, posX, posY, 50);
+    }
+
+    tokens.add(thetoken);
+    thetoken.reset(posX, posY);
+    return thetoken;
 }
