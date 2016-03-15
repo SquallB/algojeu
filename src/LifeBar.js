@@ -132,10 +132,6 @@ LifeBarView.prototype.update= function(health){
     this.healthRect = this.drawRect(5,0,this.bgWidth-5,this.height,this.bgWidth/2, health.getGame(),this.healthColor);
     this.healthRect.fixedToCamera = true;
     this.healthRect.alpha = 0.4;
-    this.cropRect = new Phaser.Rectangle(0, 0, this.width+5, this.height);
-    this.healthRect.cropEnabled = true;
-    this.healthRect.crop(this.cropRect);
-    this.healthRect.tint = this.healthGateHigh;
   }
 
   this.shieldWith = health.shield+5;
@@ -148,19 +144,16 @@ LifeBarView.prototype.update= function(health){
     this.shieldRect = this.drawRect(5,0,this.bgWidth-5,this.height,this.bgWidth/2, health.getGame(),this.shieldColor);
     this.shieldRect.fixedToCamera = true;
     this.shieldRect.alpha = 0.4;
-    this.shieldCropRect = new Phaser.Rectangle(0, 0, this.shieldWith, this.height);
-    this.shieldRect.cropEnabled = true;
-    this.shieldRect.crop(this.shieldCropRect);
+    
   }
 
+  this.cropRect = new Phaser.Rectangle(0, 0, this.width+5, this.height);
+  this.healthRect.cropEnabled = true;
+  this.healthRect.crop(this.cropRect);
 
-
-
-  health.getGame().add.tween(this.cropRect).to( { width: this.width+5}, 100, Phaser.Easing.Linear.None, true);
-  this.healthRect.updateCrop();
-
-  health.getGame().add.tween(this.shieldCropRect).to( { width: this.shieldWith}, 100, Phaser.Easing.Linear.None, true);
-  this.shieldRect.updateCrop();
+  this.shieldCropRect = new Phaser.Rectangle(0, 0, this.shieldWith, this.height);
+  this.shieldRect.cropEnabled = true;
+  this.shieldRect.crop(this.shieldCropRect);
 
   if(this.width >= health.getFullHealthValue()*0.8){
     this.healthColor = this.healthGateHigh;
