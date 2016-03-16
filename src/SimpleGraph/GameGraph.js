@@ -24,8 +24,8 @@ GameGraph.prototype.generateGraph = function(nbNodes,game){
 	var bossNode = gameTree.addValuedNode(indexFinalBossBranch,{ type :this.nodeTypes[0]} )
 	gameTree.addEdge(gameTree.getRoot(),bossNode);
 
-	this.addRndLeavesToNode(gameTree, game, game.rnd.integerInRange(1, 3),bossNode);
-
+	
+	
 
 	var indexFinalBoss =  gameTree.getOrder()+1;
 	var boss = gameTree.addValuedNode(indexFinalBoss,{
@@ -40,8 +40,9 @@ GameGraph.prototype.generateGraph = function(nbNodes,game){
 			weapon: this.weapon[game.rnd.integerInRange(0, this.weapon.length-1)]
 		}});
 
+	
+	this.addRndLeavesToNode(gameTree, game,bossNode.getId());
 	gameTree.addEdge(bossNode,boss);
-
 	this.displayTree(gameTree);
 
 
@@ -54,15 +55,15 @@ GameGraph.prototype.generateGraph = function(nbNodes,game){
 GameGraph.prototype.generateRndNodes = function(gameTree,game, nbNodes){
 	for (var i = 1; i <= nbNodes; i++) {
 		var rndType = game.rnd.integerInRange(0, this.nodeTypes.length-1);
-		if(i<=4){
-			if(i==1){
-				rndType = 0;
-			}else{
+		
+		if(i==1){
+			rndType = 0;
+		}else{
 
-				rndType = game.rnd.integerInRange(0, 3);
-			}
-			
+			rndType = game.rnd.integerInRange(0, 3);
 		}
+			
+		
 		gameTree.addValuedNode(i,{ type :this.nodeTypes[rndType]});
 	}
 }
@@ -77,13 +78,20 @@ GameGraph.prototype.generateRndEdges = function(gameTree,game, nbNodes){
 
 		if(nextIndex<=nbNodes){
 			rndChilds = this.rndChildNumber(type,nbNodes)
+
 			for (var j = 0; j < rndChilds; j++) {
 				
 				var toAdd = gameTree.getNode(j+nextIndex);
 				if(toAdd!=null){
 					gameTree.addEdge(currentNode,toAdd);
+
 				}
 				
+			}
+			if(rndChilds==1){
+				var complete = gameTree.getOrder()+1;
+				var completeNode = gameTree.addValuedNode(complete,{ type :game.rnd.integerInRange(0, this.nodeTypes.length-1)});
+				gameTree.addEdge(currentNode,completeNode);
 			}
 			nextIndex = nextIndex+rndChilds;
 		}
@@ -95,7 +103,7 @@ GameGraph.prototype.generateRndEdges = function(gameTree,game, nbNodes){
 GameGraph.prototype.addRndLeavesToNode=function(gameTree, game,currentNodeIndex){
 	var currentNode = gameTree.getNode(currentNodeIndex);
 	if(!currentNode.getNeighbors().hasNextNode()){
-		var rndChilds = this.rndChildNumber(currentNode.getValue(),3);
+		var rndChilds = this.rndChildNumber(2,4);
 					
 		for (var o = 1; o <= rndChilds; o++) {
 			var nextIndex = gameTree.getOrder()+1;
