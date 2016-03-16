@@ -53,7 +53,7 @@ function create() {
     game.physics.enable(player, Phaser.Physics.ARCADE);
     player.body.collideWorldBounds = true;
 
-    level = level.generateGraph(5,game);
+    level = gameGraph.generateGraph(5,game);
     var rootNode = level.getRoot();
     var rootValue = rootNode.getValue();
     console.log(calculateNode(rootNode));
