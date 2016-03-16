@@ -1,23 +1,9 @@
 function GameGraph(){
-	this.nodeTypes = ["ET","ET//","OU","OU//","FIRST", "LAST"];
+	this.nodeTypes = ["ET","ET//","OU","OU//"];
 	this.leafTypes = ["kill_all","survive","get_token"];
 	this.foes = ["invader","invader2","boss"];
 	this.weapon = ["Rockets","ScaleBullet","SingleBullet","FrontAndBack","ThreeWay","EightWay","ScatterShot","Beam","SplitShot"]
 	this.token = ["shield","health","life","weapon"];
-
-
-	this.leaf = [{
-		objective : "survive",
-		"total_dammaged" : "0",
-		"vague": {
-			"numberEnemy": 3,
-		 	"type" : "invader",
-		    "life": 10,
-		    "speed": 100,
-		    "weapon": "Rockets"
-		}	
-
-		}]
 }
 
 
@@ -112,7 +98,7 @@ GameGraph.prototype.generateRndLeaf = function(game){
 
 	}else{
 
-		this.vague = {
+		toReturn.vague = {
 			numberEnemy : game.rnd.integerInRange(1, 10),
 			type: this.foes[game.rnd.integerInRange(0, this.foes.length-1)],
 			life: game.rnd.integerInRange(1, 20),

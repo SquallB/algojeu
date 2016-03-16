@@ -7,7 +7,7 @@ var background;
 var enemies;
 var tokens;
 var level;
-//var counter = 0;
+var counter = 0;
 
 function preload() {
     game.load.image('starfield', 'assets/starfield.png');
@@ -39,7 +39,7 @@ function create() {
 
     var gameGraph = new GameGraph();
 
-    console.log(gameGraph.generateGraph(5,game));
+    level = gameGraph.generateGraph(5,game).getRoot();
     cursors = game.input.keyboard.createCursorKeys();
     game.input.keyboard.addKeyCapture([ Phaser.Keyboard.SPACEBAR ]);
 
@@ -47,7 +47,7 @@ function create() {
     enemies.enableBody = true;
     enemies.physicsBodyType = Phaser.Physics.ARCADE;
 
-    loadLevel("tree_2");
+    //loadLevel("tree_2");
 
     explosions = game.add.group();
     explosions.createMultiple(30, 'kaboom');
@@ -66,7 +66,7 @@ function setupInvader (invader) {
 function update() {
 
     console.log("round: " + counter);
-    //counter++;
+    counter++;
     if(loadNode(level)) {
         console.log("LEVEL IS FINISHED ! CONGRATULATIONS !");
         // level finished
@@ -140,7 +140,7 @@ function tokenCollisionHandler(player, token) {
     token.kill();
 }
 
-function loadLevel(levelName) {
+/*function loadLevel(levelName) {
     $.ajax({
         async: false,
         dataType: "json",
@@ -149,20 +149,28 @@ function loadLevel(levelName) {
             level = data.tree;
         }
     });
-}
+}*/
 
 function loadLeaf(node) {
+    console.log("loadLeaf");
+    console.log(node);
     var value = node.getValue();
+    console.log(value);
+    value.x = "test";
+    console.log(value);
     if(value.objective === "survive") {
         console.log("createLeafSurvive");
+        console.log(node);
         numberWave++;
         value.enemies = createSurviveWave(value.vague);
     } else if(value.objective === "kill_all") {
-        console.log("createLeafKillALL");
+        console.log("createLeafKillAll");
+        console.log(node);
         numberWave++;
         value.enemies = createKillAllWave(value.vague);
     } else if(value.objective === "get_token") {
         console.log("createLeafToken");
+        console.log(node);
         value.thetoken = createToken(value.token);
     }
 }
@@ -173,9 +181,7 @@ function loadNode(node) {
     if (value.statut === undefined) value.statut = false;
     if (isObjectiveFulfill(node)) return true;
 
-    if(isLeaf(node)) {
-        loadLeaf(node);
-    } else {
+    if(!isLeaf(node)) {
         if(value.type === "ET//" || value.type === "OU//") {
             console.log("node: ET/OU");
             console.log(node);
@@ -183,34 +189,40 @@ function loadNode(node) {
         } else if(value.type === "ET" || value.type === "OU") {
             console.log("node: ET_SEMANTIQUE/OU_SEMANTIQUE");
             var children = node.getNeighbors();
-            while (children.hasNext()) {
+            while (children.hasNextNode()) {
                 var currentChild = children.getNextNode();
                 var currentChildValue = currentChild.getValue();
-                console.log("statut child " + i + " : " + currentChildValue.statut);
+                console.log("statut child: " + currentChildValue.statut);
                 if (isWaiting(currentChild)) {
                     if (isObjectiveFulfill(currentChild)) currentChildValue.statut = true;
                     console.log("node: waiting");
                     console.log(currentChild);
                     return;
                 } else if (currentChildValue.statut === undefined) {
+                    currentChildValue.statut = false;
                     console.log("node: undefined");
                     console.log(currentChild);
-                    currentChildValue.statut = false;
-                    if(isLeaf(node)) {
+                    if(isLeaf(currentChild)) {
+                        console.log("congrats, it's a leaf !!!!!!!");
                         loadLeaf(currentChild);
                     } else {
+                        console.log("bouh, it's a node...");
                         loadNode(currentChild);
                     }
                     return;
                 }
             }
         }
-    } else 
+    } else {
+        loadLeaf(node);
+    }
 
     return false;
 }
 
 function isLeaf(node) {
+    console.log("isLeaf");
+    console.log(node.getDegree());
     return (node.getDegree() === 0);
 }
 
@@ -242,7 +254,7 @@ function isObjectiveNodeFulfill(node) {
     if (isWaiting(value)) {
         if (value.type === "ET//" || value.type === "ET") {
             var children = node.getNeighbors();
-            while (children.hasNext()) {
+            while (children.hasNextNode()) {
                 var currentChild = children.getNextNode();
                 if(!isObjectiveFulfill(currentChild)) {
                     return false;
@@ -253,7 +265,7 @@ function isObjectiveNodeFulfill(node) {
         } else if (value.type === "OU//" || value.type === "OU") {
             var nbTrue = 0;
             var children = node.getNeighbors();
-            while (children.hasNext()) {
+            while (children.hasNextNode()) {
                 var currentChild = children.getNextNode();
                 var currentChildValue = currentChild.getValue();
                 if(currentChildValue.statut === undefined) {
@@ -269,14 +281,15 @@ function isObjectiveNodeFulfill(node) {
 }
 
 function isObjectiveLeafFulfill(leaf) {
-    console.log("isObjectiveLeafFulfill");
-    console.log("leaf:" + leaf.statut);
     var value = leaf.getValue();
+    console.log("isObjectiveLeafFulfill");
+    console.log("leaf:" + value.statut);
     if (isTrue(value)) return true;
     if (value.statut === undefined) return false;
 
     if (value.objective === "kill_all" || value.objective === "survive") {
-        return (value.statut = areAllDeadOrGone(value.enemies));
+        console.log(value);
+        return (value.statut = areAllDeadOrGone(leaf));
     } else if (value.objective === "get_token") {
         console.log('objective get_token');
         console.log(leaf);
@@ -286,7 +299,7 @@ function isObjectiveLeafFulfill(leaf) {
 
 function loadParallelNode(node) {
     var children = node.getNeighbors();
-    while (children.hasNext()) {
+    while (children.hasNextNode()) {
         var currentChild = children.getNextNode();
         var currentChildValue = currentChild.getValue();
         currentChildValue.statut = false;
@@ -298,10 +311,12 @@ function loadParallelNode(node) {
     }
 }
 
-function areAllDeadOrGone(enemies) {
-    for (var i = 0; i < enemies.length; i++) {
-        console.log(enemies[i]);
-        if(enemies[i].position.x > 0 && enemies[i].life > 0) {
+function areAllDeadOrGone(leaf) {
+    var vagueEnemies = leaf.getValue().enemies;
+    console.log(leaf);
+    for (var i = 0; i < vagueEnemies.length; i++) {
+        console.log(vagueEnemies[i]);
+        if(vagueEnemies[i].position.x > 0 && vagueEnemies[i].life > 0) {
             console.log("enemies[" + i + "]: false");
             return false;
         }
@@ -311,28 +326,30 @@ function areAllDeadOrGone(enemies) {
 }
 
 function createKillAllWave(vague) {
-    var vagueEnemy = [];
+    var vagueEnemies = [];
     var positionX = 750 - numberWave * 50;
+    var posYInc = Math.floor(650 / vague.numberEnemy);
     for (var i = 0; i < vague.numberEnemy; i++) {
-        var invader = new Enemy.Invader(game, positionX, vague.positionY[i], vague.enemyDescription.life, vague.enemyDescription.speed, vague.enemyDescription.type, vague.enemyDescription.weapon);
+        var invader = new Enemy.Invader(game, positionX, 50 + i*posYInc, vague.life, vague.speed, vague.type, vague.weapon);
         invader.start();
         enemies.add(invader);
-        vagueEnemy[i] = invader;
+        vagueEnemies[i] = invader;
     }
-    return vagueEnemy;
+    return vagueEnemies;
 }
 
 function createSurviveWave(vague) {
-    var vagueEnemy = [];
+    var vagueEnemies = [];
     var positionX = 800 + numberWave * 50;
+    var posYInc = Math.floor(650 / vague.numberEnemy);
     for (var i = 0; i < vague.numberEnemy; i++) {
-        var invader = new Enemy.Invader(game, positionX, vague.positionY[i], vague.enemyDescription.life, vague.enemyDescription.speed, vague.enemyDescription.type, vague.enemyDescription.weapon);
+        var invader = new Enemy.Invader(game, positionX, 50 + i*posYInc, vague.life, vague.speed, vague.type, vague.weapon);
         invader.start();
         enemies.add(invader);
         invader.body.velocity.set(-invader.speed, 0);
-        vagueEnemy[i] = invader;
+        vagueEnemies[i] = invader;
     }
-    return vagueEnemy;
+    return vagueEnemies;
 }
 
 function createToken(token) {
@@ -352,8 +369,7 @@ function createToken(token) {
 
     tokens.add(thetoken);
     thetoken.reset(posX, posY);
-    var deleteToken = function(token){
-
+    var deleteToken = function(token) {
         token.kill();
     }
     this.game.time.events.add(Phaser.Timer.SECOND * 15, deleteToken, this, thetoken);
