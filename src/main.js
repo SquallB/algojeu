@@ -9,6 +9,21 @@ var tokens;
 var level = new GameGraph();
 var counter = 0;
 
+function initInfos(text, color = "black") {
+    $("#info").html(text);
+    $("#info").css("color", color);
+}
+
+function writeInfos(text, color = "black") {
+    if($("#info").html() !== "") {
+        $("#info").html($("#info").html() + " " + text);
+    } else {
+        $("#info").html(text);
+    }
+
+    $("#info").css("color", color);
+}
+
 function preload() {
     game.load.image('starfield', 'assets/starfield.png');
     game.load.image('ship', 'assets/thrust_ship.png');
@@ -54,6 +69,9 @@ function create() {
 
     tokens = game.add.group();
     tokens.enableBody = true;
+
+    //Initialisation de la div #info
+    initInfos("GAME STARTED", "green");
 }
 
 function setupInvader (invader) {
@@ -67,9 +85,16 @@ function update() {
     counter++;
     if(counter % 50 === 0) {
         //console.log("round: " + counter);
-        if(loadLevel()) console.log("LEVEL IS FINISHED ! CONGRATULATIONS !");
-        // level finished
-        // stop the game
+        if(loadLevel()) {
+            var time = new Date(game.time.now - game.time.pauseDuration);
+            initInfos("LEVEL FINISHED ! CONGRATULATIONS !<br/>Time: " + time.getUTCMinutes() + ":" + time.getUTCSeconds() , "green");
+            game.gamePaused();
+        }
+
+        if(player.getLife() === 0) {
+            initInfos("NO MORE LIVES ! GAME LOST !", "red");
+            game.gamePaused();
+        }
     }
 
     background.tilePosition.x -= 2;
@@ -139,17 +164,6 @@ function tokenCollisionHandler(player, token) {
     token.kill();
 }
 
-/*function loadLevel(levelName) {
-    $.ajax({
-        async: false,
-        dataType: "json",
-        url: "ressource/" + levelName + ".json",
-        success: function(data) {
-            level = data.tree;
-        }
-    });
-}*/
-
 function loadLevel() {
     var rootNode = level.getRoot();
     var rootValue = rootNode.getValue();
@@ -159,27 +173,29 @@ function loadLevel() {
 }
 
 function loadLeaf(node) {
+    var value = node.getValue();
     //console.log("loadLeaf");
     //console.log(node);
-    var value = node.getValue();
-    //console.log(value);
-    value.x = "test";
     //console.log(value);
     if(value.objective === "survive") {
         //console.log("createLeafSurvive");
         //console.log(node);
         numberWave++;
         value.enemies = createSurviveWave(value.vague);
+        writeInfos("Survive Wave of " + value.vague.numberEnemy + " enemies.");
     } else if(value.objective === "kill_all") {
         //console.log("createLeafKillAll");
         //console.log(node);
         numberWave++;
         value.enemies = createKillAllWave(value.vague);
+        writeInfos("Kill all " + value.vague.numberEnemy + " enemies.");
     } else if(value.objective === "get_token") {
         //console.log("createLeafToken");
         //console.log(node);
         value.thetoken = createToken(value.token);
+        writeInfos("Pick up " + value.token.type.toLowerCase() + " token.");
     }
+    value.statut = false;
 }
 
 function loadNode(node) {
@@ -208,6 +224,7 @@ function loadNode(node) {
                 } else if (currentChildValue.statut === undefined) {
                     //console.log("node: undefined");
                     //console.log(currentChild);
+                    initInfos("");
                     if(isLeaf(currentChild)) {
                         currentChildValue.statut = false;
                         //console.log("congrats, it's a leaf !!!!!!!");
@@ -226,6 +243,7 @@ function loadNode(node) {
             }
         }
     } else {
+        initInfos("");
         loadLeaf(node);
     }
 
@@ -283,7 +301,7 @@ function isObjectiveNodeFulfill(node) {
                 if(currentChildValue.statut === undefined) {
                     //console.log("!isObjectiveNodeFulfill");
                     return false;
-                } else if(isTrue(currentChildValue)) {
+                } else if(isObjectiveFulfill(currentChild)) {
                     nbTrue++;
                 }
                 /*if (nbTrue > 0) console.log("isObjectiveNodeFulfill");
@@ -311,6 +329,7 @@ function isObjectiveLeafFulfill(leaf) {
 }
 
 function loadParallelNode(node) {
+    initInfos("", "black");
     var children = node.getNeighbors();
     //console.log(children);
     while (children.hasNextNode()) {
