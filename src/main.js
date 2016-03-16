@@ -38,6 +38,9 @@ function create() {
     player.body.collideWorldBounds = true;
 
     level = level.generateGraph(5,game);
+    var rootNode = level.getRoot();
+    var rootValue = rootNode.getValue();
+    console.log(calculateNode(rootNode));
 
     cursors = game.input.keyboard.createCursorKeys();
     game.input.keyboard.addKeyCapture([ Phaser.Keyboard.SPACEBAR ]);
@@ -154,7 +157,6 @@ function loadLevel() {
     var rootNode = level.getRoot();
     var rootValue = rootNode.getValue();
     if(rootValue.statut === undefined) rootValue.statut = false;
-
     return loadNode(rootNode);
 }
 
@@ -271,7 +273,7 @@ function isObjectiveNodeFulfill(node) {
                     return false;
                 }
             }
-            
+
             return (value.statut = true);
         } else if (value.type === "OU//" || value.type === "OU") {
             //console.log("isObjectiveNodeFulfill : OU");
@@ -337,7 +339,7 @@ function areAllDeadOrGone(leaf) {
             return false;
         }
     }
-    //console.log('isObjectiveLeafFulfill : survive or kill all'); 
+    //console.log('isObjectiveLeafFulfill : survive or kill all');
     return true;
 }
 

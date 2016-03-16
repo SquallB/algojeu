@@ -294,14 +294,19 @@ Weapon.ScatterShot.prototype.fire = function (source, isPlayer) {
 //  Fires a streaming beam of lazers, very fast, in front of the player //
 //////////////////////////////////////////////////////////////////////////
 
-Weapon.Beam = function (game) {
+Weapon.Beam = function (game,isPlayer) {
 
     Phaser.Group.call(this, game, game.world, 'Beam', false, true, Phaser.Physics.ARCADE);
 
     this.nextFire = 0;
     this.bulletSpeed = 1000;
-    this.fireRate = 90;
     this.dammage =2;
+    if(isPlayer){
+        this.fireRate = 90;
+
+    }else {
+        this.fireRate = 700;
+    }
 
     for (var i = 0; i < 64; i++)
     {
@@ -349,7 +354,7 @@ Weapon.SplitShot = function (game, isPlayer) {
     if (isPlayer) {
         this.fireRate = 200;
     }else {
-        this.fireRate = 400;
+        this.fireRate = 800;
     }
 
 
@@ -377,12 +382,12 @@ Weapon.SplitShot.prototype.fire = function (source, isPlayer) {
         this.getFirstExists(false).fire(x, y, 0, this.bulletSpeed, 0, 500);
 
     }else {
-        var x = source.x - 15;
+        var x = source.x - 20;
         var y = source.y + 10;
 
-        this.getFirstExists(false).fire(x, y, 180, this.bulletSpeed, 0, -500);
+
         this.getFirstExists(false).fire(x, y, 180, this.bulletSpeed, 0, 0);
-        this.getFirstExists(false).fire(x, y, 180, this.bulletSpeed, 0, 500);
+        
 
 
     }
@@ -464,7 +469,7 @@ Weapon.ScaleBullet = function (game,isPlayer) {
         this.fireRate = 500;
     }else {
 
-        this.fireRate = 800;
+        this.fireRate = 1000;
     }
 
     for (var i = 0; i < 32; i++)
