@@ -6,7 +6,8 @@ var bullet;
 var background;
 var enemies;
 var tokens;
-var level = new GameGraph();
+var gameGraph = new GameGraph();
+var level;
 var counter = 0;
 
 function initInfos(text, color = "black") {
@@ -52,7 +53,7 @@ function create() {
     game.physics.enable(player, Phaser.Physics.ARCADE);
     player.body.collideWorldBounds = true;
 
-    level = level.generateGraph(5,game);
+    level = gameGraph.generateGraph(5,game);
 
     cursors = game.input.keyboard.createCursorKeys();
     game.input.keyboard.addKeyCapture([ Phaser.Keyboard.SPACEBAR ]);
@@ -147,6 +148,10 @@ function bulletsCollisionHandler(bullet, enemy) {
         explosion.play('kaboom', 30, false, true);
 
         enemy.kill();
+
+        if(game.rnd.integerInRange(0, 100) > 95) {
+            createToken(gameGraph.generateRndToken(game), enemy.body.x, enemy.body.y);
+        }
     }
 }
 
@@ -389,10 +394,10 @@ function createSurviveWave(vague) {
     return vagueEnemies;
 }
 
-function createToken(token) {
+function createToken(token, posX, posY) {
     var thetoken;
-    var posX = Math.floor((Math.random() * 700) + 50);
-    var posY = Math.floor((Math.random() * 500) + 50);
+    var posX = posX || Math.floor((Math.random() * 700) + 50);
+    var posY = posY || Math.floor((Math.random() * 500) + 50);
 
     if(token.type === "weapon") {
         //console.log("createWeaponToken");
