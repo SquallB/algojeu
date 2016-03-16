@@ -137,33 +137,38 @@ GameGraph.prototype.generateRndLeaf = function(game){
 	toReturn.total_dammaged = "0";
 	toReturn.type = toReturn.objective;
 	if(toReturn.objective === "get_token"){
-		toReturn.token = {
-			type: this.token[game.rnd.integerInRange(0, this.token.length-1)]
-		}
-
-		switch(toReturn.token.type) {
-			case "weapon":
-				toReturn.token.value = this.weapon[game.rnd.integerInRange(0, this.weapon.length-1)];
-				break;
-			case "shield":
-				toReturn.token.value = game.rnd.integerInRange(25, 100)/100;
-				break;
-		}
-
-
-
+		toReturn.token = this.generateRndToken(game);
 	}else{
+		toReturn.vague = this.generateRndWave(game);
+		//cas du boss
+	}
+	
+	return toReturn;
 
-		toReturn.vague = {
+}
+
+
+GameGraph.prototype.generateRndToken= function(game){
+	var token = {type: this.token[game.rnd.integerInRange(0, this.token.length-1)]};
+
+	switch(token.type) {
+		case "weapon":
+			token.value = this.weapon[game.rnd.integerInRange(0, this.weapon.length-1)];
+			break;
+		case "shield":
+			token.value = game.rnd.integerInRange(25, 100)/100;
+			break;
+	}
+	return token;
+}
+
+GameGraph.prototype.generateRndWave= function(game){
+	vague = {
 			numberEnemy : game.rnd.integerInRange(1, 10),
 			type: this.foes[game.rnd.integerInRange(0, this.foes.length-1)],
 			life: game.rnd.integerInRange(1, 20),
 			speed: game.rnd.integerInRange(30, 150),
 			weapon: this.weapon[game.rnd.integerInRange(0, this.weapon.length-1)]
 		}
-		//cas du boss
-	}
-	
-	return toReturn;
-
+	return vague;
 }
