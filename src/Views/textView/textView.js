@@ -65,7 +65,6 @@ textView.prototype = new AbstractView();
 textView.prototype.refresh = function (graph)
 {
     this.initializeTextView();
-    this.initializeTable(graph);
 
 } 
 

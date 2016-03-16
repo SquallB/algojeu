@@ -44,11 +44,11 @@ LifeBar.prototype.display = function(){
 }
 
 LifeBar.prototype.addLife = function() {
-  this.lives++;
-  var ship = this.view.lives.create(this.bgWidth/2 + 15+(30 * this.lives), 40, 'ship');
+  var ship = this.view.lives.create(this.view.bgWidth/2 + 15+(30 * this.lives), 40, 'ship');
   ship.anchor.setTo(0.5, 0.5);
   ship.angle = 90;
   ship.alpha = 0.4;
+  this.lives++;
 }
 
 LifeBar.prototype.changeLife=function(modifier){
@@ -72,8 +72,12 @@ LifeBar.prototype.changeLife=function(modifier){
     if(this.getLives() > 0) {
       this.setLives(this.getLives() - 1);
       this.value = this.getFullHealthValue();
-      var lifeView = this.view.lives.getFirstAlive();
-      lifeView.kill();    
+      var lifeView = this.view.lives;
+      var livesSprite = []
+      lifeView.forEachAlive(function(life) {
+        livesSprite.push(life);
+      });
+      livesSprite[livesSprite.length-1].kill(); 
     }
     else {
       this.value = 0;
