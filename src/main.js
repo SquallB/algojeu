@@ -64,10 +64,10 @@ function setupInvader (invader) {
 
 function update() {
 
-    //console.log("round: " + counter);
     counter++;
-    if(counter % 100 === 0 && loadLevel()) {
-        //console.log("LEVEL IS FINISHED ! CONGRATULATIONS !");
+    if(counter % 50 === 0) {
+        //console.log("round: " + counter);
+        if(loadLevel()) console.log("LEVEL IS FINISHED ! CONGRATULATIONS !");
         // level finished
         // stop the game
     }
@@ -190,7 +190,7 @@ function loadNode(node) {
     if(!isLeaf(node)) {
         if(value.type === "ET//" || value.type === "OU//") {
             //console.log("node: ET_OU//");
-            loadParallelNode(node);
+            if(value.statut === undefined) loadParallelNode(node);
         } else if(value.type === "ET" || value.type === "OU") {
             //console.log("node: ET/OU");
             var children = node.getNeighbors();
@@ -206,15 +206,16 @@ function loadNode(node) {
 
                     return;
                 } else if (currentChildValue.statut === undefined) {
-                    currentChildValue.statut = false;
                     //console.log("node: undefined");
                     //console.log(currentChild);
                     if(isLeaf(currentChild)) {
+                        currentChildValue.statut = false;
                         //console.log("congrats, it's a leaf !!!!!!!");
                         loadLeaf(currentChild);
                     } else {
                         //console.log("bouh, it's a node...");
                         loadNode(currentChild);
+                        currentChildValue.statut = false;
                     }
                     //console.log("return, node :");
                     //console.log(node);
@@ -311,13 +312,16 @@ function isObjectiveLeafFulfill(leaf) {
 
 function loadParallelNode(node) {
     var children = node.getNeighbors();
+    //console.log(children);
     while (children.hasNextNode()) {
         var currentChild = children.getNextNode();
         var currentChildValue = currentChild.getValue();
-        currentChildValue.statut = false;
+        //console.log(currentChild);
         if(isLeaf(currentChild)) {
+            //console.log("isLeaf");
             loadLeaf(currentChild);
         } else {
+            //console.log("isNode");
             loadNode(currentChild);
         }
     }
