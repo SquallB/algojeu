@@ -245,28 +245,10 @@ var initializeInterfaceFor2Graph = function(g1, g2, divName1_, divName2_, height
  *
  */
 var initializeInterfaceFor1Graph = function(graph, nameGraph, heightSvg, xSvg, ySvg) {
-	
-	//Boutton permétant de choisir la vue tableView ou textView.
-	var buttonChoose = $("<input></input>");
-	$(buttonChoose).attr("type", "button").attr("id", "chooseView").attr("value", "textView");
-	$("body").append(buttonChoose);
-
 	/*
 	 *	Fonction perméttant d'afficher la vue texte (textView et tableView) choisi
 	 */
-	var handleChooseViewTextTable = function(ev) {
-		if(String(ev.target.value) === "textView" ) {
-			//Affichage du tableView correspond au graphe choisi
-			interfaceTools.handleDisplayViewTableText(nameGraph, "visible", "hidden");
-			ev.target.value = "tableView";
-		}else {
-			//Affichage du textView correspond au graphe choisi
-			interfaceTools.handleDisplayViewTableText(nameGraph, "hidden", "visible");
-			ev.target.value = "textView";
-		}
-		chooseViewTextTable = ev.target.value;
-	}
-	$("#chooseView").on("click", handleChooseViewTextTable);
+	
 
 	var modele = new ConcreteGraph(xSvg, ySvg, graph, heightSvg, 5	, nameGraph, nameGraph);
 		modele.addView(new graphView(xSvg, ySvg, modele, graph, heightSvg));
@@ -284,5 +266,5 @@ var initializeInterfaceFor1Graph = function(graph, nameGraph, heightSvg, xSvg, y
 	//On cache la vue tableView pour commencer.
 	$("#"+nameGraph+"tableView").css("visibility", "hidden");
 
-	
+
 }

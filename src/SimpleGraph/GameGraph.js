@@ -2,8 +2,9 @@ function GameGraph(){
 	this.nodeTypes = ["ET","OU","ET//","OU//"];
 	this.leafTypes = ["kill_all","survive","get_token"];
 	this.foes = ["invader","invader2","boss"];
-	this.weapon = ["Rockets","ScaleBullet","SingleBullet","FrontAndBack","ThreeWay","EightWay","ScatterShot","Beam","SplitShot"]
+	this.weapon = ["Rockets","ScaleBullet","FrontAndBack","ThreeWay","EightWay","ScatterShot","Beam","SplitShot"]
 	this.token = ["shield","health","life","weapon"];
+	this.modele = null;
 }
 
 
@@ -11,6 +12,18 @@ GameGraph.prototype.generateGraph = function(nbNodes,game){
 
 	var gameTree = new SimpleGraph(true);
 
+	this.generateRndNodes(gameTree,game,nbNodes);
+
+	this.generateRndEdges(gameTree,game,nbNodes);
+	
+	this.generateRndLeaves(gameTree,game,nbNodes);
+
+	this.displayTree(gameTree);
+
+	return gameTree;
+}
+
+GameGraph.prototype.generateRndNodes = function(gameTree,game, nbNodes){
 	for (var i = 1; i <= nbNodes; i++) {
 		var rndType = game.rnd.integerInRange(0, this.nodeTypes.length-1);
 		if(i<=4){
@@ -18,13 +31,16 @@ GameGraph.prototype.generateGraph = function(nbNodes,game){
 				rndType = 0;
 			}else{
 
-				rndType = game.rnd.integerInRange(0, 1);
+				rndType = game.rnd.integerInRange(0, 3);
 			}
 			
 		}
 		gameTree.addValuedNode(i,{ type :this.nodeTypes[rndType]});
 	}
-	var rootNode = gameTree.getNode(1);
+}
+
+GameGraph.prototype.generateRndEdges = function(gameTree,game, nbNodes){
+	var rootNode = gameTree.getRoot();
 	var nextIndex = 2; 
 	for (var k = 1; k <= nbNodes; k++) {
 		var currentNode = gameTree.getNode(k);
@@ -45,7 +61,9 @@ GameGraph.prototype.generateGraph = function(nbNodes,game){
 		}
 		
 	}
+}
 
+GameGraph.prototype.generateRndLeaves = function(gameTree,game, nbNodes){
 	for (var l = 1; l <= nbNodes; l++) {
 		var currentNode = gameTree.getNode(l);
 		if(!currentNode.getNeighbors().hasNextNode()){
@@ -54,20 +72,12 @@ GameGraph.prototype.generateGraph = function(nbNodes,game){
 			for (var o = 1; o <= rndChilds; o++) {
 				var nextIndex = gameTree.getOrder()+1;
 
-				
-
 				gameTree.addValuedNode(nextIndex,this.generateRndLeaf(game));
 				gameTree.addEdge(currentNode,gameTree.getNode(nextIndex));
 
 			}
 		}
 	}
-	this.displayTree(gameTree);
-	return gameTree;
-}
-
-GameGraph.prototype.generateRndNodes = function(Tree, nbNodes){
-
 }
 GameGraph.prototype.rndChildNumber= function(type,maxNumber){
 	var rndChilds=0;
@@ -100,7 +110,7 @@ GameGraph.prototype.generateRndLeaf = function(game){
 				toReturn.token.value = this.weapon[game.rnd.integerInRange(0, this.weapon.length-1)];
 				break;
 			case "shield":
-				toReturn.token.value = game.rnd.integerInRange(0, 1);
+				toReturn.token.value = game.rnd.integerInRange(25, 100)/100;
 				break;
 		}
 
