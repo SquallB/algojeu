@@ -9,6 +9,8 @@ var tokens;
 var gameGraph = new GameGraph();
 var level;
 var counter = 0;
+var stats = {};
+var nbKills = 0;
 
 function initInfos(text, color = "black") {
     $("#info").html(text);
@@ -77,6 +79,8 @@ function create() {
 
     //Initialisation de la div #info
     initInfos("GAME STARTED", "green");
+
+    getStats();
 }
 
 function setupInvader (invader) {
@@ -94,6 +98,7 @@ function update() {
             var time = new Date(game.time.now - game.time.pauseDuration);
             initInfos("LEVEL FINISHED ! CONGRATULATIONS !<br/>Time: " + time.getUTCMinutes() + ":" + time.getUTCSeconds() , "green");
             game.gamePaused();
+            updateStats(player);
         }
 
         if(player.getLife() === 0) {
@@ -152,6 +157,7 @@ function bulletsCollisionHandler(bullet, enemy) {
         explosion.play('kaboom', 30, false, true);
 
         enemy.kill();
+        nbKills++;
 
         if(game.rnd.integerInRange(0, 100) > 95) {
             createToken(gameGraph.generateRndToken(game), enemy.body.x, enemy.body.y);
@@ -423,4 +429,61 @@ function createToken(token, posX, posY) {
     }
     this.game.time.events.add(Phaser.Timer.SECOND * 15, deleteToken, this, thetoken);*/
     return thetoken;
+}
+
+function getStats() {
+    var stat = localStorage.getItem('statsNumber');
+    if(stat === null) {
+        stats['statsNumber'] = 0;
+    }
+    else {
+        stats['statsNumber'] = parseInt(stat);
+    }
+
+    stat = localStorage.getItem('statsScore');
+    if(stats['statsScore'] === null) {
+        stats['statsScore'] = 0;
+    }
+    else {
+        stats['statsScore'] = parseInt(stat);
+    }
+
+    stat = localStorage.getItem('statsLife');
+    if(stats['statsLife'] === null) {
+        stats['statsLife'] = 0;
+    }
+    else {
+        stats['statsLife'] = parseFloat(stat);
+    }
+
+    stat = localStorage.getItem('statsTime');
+    if(stats['statsTime'] === null) {
+        stats['statsTime'] = 0;
+    }
+    else {
+        stats['statsTime'] = parseFloat(stat);
+    }
+
+    stat = localStorage.getItem('statsKills');
+    if(stats['statsKills'] === null) {
+        stats['statsKills'] = 0;
+    }
+    else {
+        stats['statsKills'] = parseFloat(stat);
+    }
+}
+
+function updateStats() {
+    stats['statsNumber']++;
+    stats['statsLife'] = (stats['statsLife'] + player.lifeBar.lives * player.lifeBar.fullHeathValue + player.lifeBar.value) / stats['statsNumber'];
+    stats['statsTime'] = (stats['statsTime'] + game.time.now) / stats['statsNumber'];
+    stats['statsKills'] = (stats['statsKills'] + nbKills) / stats['statsNumber'];
+
+    saveStats();
+}
+
+function saveStats(player) {
+    for(property in stats) {
+        localStorage.setItem(property, stats[property]);
+    }
 }

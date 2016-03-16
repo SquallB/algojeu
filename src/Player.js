@@ -4,7 +4,7 @@ var Player = function(game, posX, posY, weapon, life, shield, speed) {
   this.weapon = weapon;
   this.lifeBar = new LifeBar(game, life || 100);
   this.lifeBar.shield = shield || 0;
-  this.speed = speed || 300;
+  this.speed = speed || 500;
 };
 
 Player.prototype = Object.create(Phaser.Sprite.prototype);
