@@ -158,7 +158,7 @@ GameGraph.prototype.generateRndLeaf = function(game){
 			numberEnemy : game.rnd.integerInRange(1, 10),
 			type: this.foes[game.rnd.integerInRange(0, this.foes.length-1)],
 			life: game.rnd.integerInRange(1, 20),
-			speed: game.rnd.integerInRange(10, 30),
+			speed: game.rnd.integerInRange(30, 150),
 			weapon: this.weapon[game.rnd.integerInRange(0, this.weapon.length-1)]
 		}
 		//cas du boss
