@@ -72,8 +72,12 @@ LifeBar.prototype.changeLife=function(modifier){
     if(this.getLives() > 0) {
       this.setLives(this.getLives() - 1);
       this.value = this.getFullHealthValue();
-      var lifeView = this.view.lives.getFirstAlive();
-      lifeView.kill();    
+      var lifeView = this.view.lives;
+      var livesSprite = []
+      lifeView.forEachAlive(function(life) {
+        livesSprite.push(life);
+      });
+      livesSprite[livesSprite.length-1].kill(); 
     }
     else {
       this.value = 0;
