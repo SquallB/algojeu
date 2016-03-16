@@ -283,4 +283,6 @@ var initializeInterfaceFor1Graph = function(graph, nameGraph, heightSvg, xSvg, y
 
 	//On cache la vue tableView pour commencer.
 	$("#"+nameGraph+"tableView").css("visibility", "hidden");
+
+	
 }

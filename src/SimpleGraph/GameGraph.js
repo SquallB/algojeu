@@ -1,5 +1,5 @@
 function GameGraph(){
-	this.nodeTypes = ["ET","ET//","OU","OU//"];
+	this.nodeTypes = ["ET","OU","ET//","OU//"];
 	this.leafTypes = ["kill_all","survive","get_token"];
 	this.foes = ["invader","invader2","boss"];
 	this.weapon = ["Rockets","ScaleBullet","SingleBullet","FrontAndBack","ThreeWay","EightWay","ScatterShot","Beam","SplitShot"]
@@ -13,6 +13,15 @@ GameGraph.prototype.generateGraph = function(nbNodes,game){
 
 	for (var i = 1; i <= nbNodes; i++) {
 		var rndType = game.rnd.integerInRange(0, this.nodeTypes.length-1);
+		if(i<=4){
+			if(i==1){
+				rndType = 0;
+			}else{
+
+				rndType = game.rnd.integerInRange(0, 1);
+			}
+			
+		}
 		gameTree.addValuedNode(i,{ type :this.nodeTypes[rndType]});
 	}
 	var rootNode = gameTree.getNode(1);
@@ -40,7 +49,8 @@ GameGraph.prototype.generateGraph = function(nbNodes,game){
 	for (var l = 1; l <= nbNodes; l++) {
 		var currentNode = gameTree.getNode(l);
 		if(!currentNode.getNeighbors().hasNextNode()){
-			var rndChilds = this.rndChildNumber(currentNode.getValue(),5);
+			var rndChilds = this.rndChildNumber(currentNode.getValue(),3);
+						
 			for (var o = 1; o <= rndChilds; o++) {
 				var nextIndex = gameTree.getOrder()+1;
 
