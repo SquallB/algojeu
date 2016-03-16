@@ -5,6 +5,8 @@ function GameGraph(){
 	this.weapon = ["Rockets","ScaleBullet","FrontAndBack","ThreeWay","EightWay","ScatterShot","Beam","SplitShot"]
 	this.token = ["shield","health","life","weapon"];
 	this.modele = null;
+
+
 }
 
 
@@ -18,10 +20,36 @@ GameGraph.prototype.generateGraph = function(nbNodes,game){
 	
 	this.generateRndLeaves(gameTree,game,nbNodes);
 
+	var indexFinalBossBranch = gameTree.getOrder()+1;
+	var bossNode = gameTree.addValuedNode(indexFinalBossBranch,{ type :this.nodeTypes[0]} )
+	gameTree.addEdge(gameTree.getRoot(),bossNode);
+
+	this.addRndLeavesToNode(gameTree, game, game.rnd.integerInRange(1, 3),bossNode);
+
+
+	var indexFinalBoss =  gameTree.getOrder()+1;
+	var boss = gameTree.addValuedNode(indexFinalBoss,{
+		objective : this.leafTypes[0],
+		total_dammaged : "0",
+	    type : this.leafTypes[0],
+	    vague : {
+			numberEnemy : game.rnd.integerInRange(1, 2),
+			type: this.foes[2],
+			life: game.rnd.integerInRange(20, 40),
+			speed: game.rnd.integerInRange(10, 30),
+			weapon: this.weapon[game.rnd.integerInRange(0, this.weapon.length-1)]
+		}});
+
+	gameTree.addEdge(bossNode,boss);
+
 	this.displayTree(gameTree);
+
 
 	return gameTree;
 }
+
+
+
 
 GameGraph.prototype.generateRndNodes = function(gameTree,game, nbNodes){
 	for (var i = 1; i <= nbNodes; i++) {
@@ -63,22 +91,30 @@ GameGraph.prototype.generateRndEdges = function(gameTree,game, nbNodes){
 	}
 }
 
-GameGraph.prototype.generateRndLeaves = function(gameTree,game, nbNodes){
-	for (var l = 1; l <= nbNodes; l++) {
-		var currentNode = gameTree.getNode(l);
-		if(!currentNode.getNeighbors().hasNextNode()){
-			var rndChilds = this.rndChildNumber(currentNode.getValue(),3);
-						
-			for (var o = 1; o <= rndChilds; o++) {
-				var nextIndex = gameTree.getOrder()+1;
 
-				gameTree.addValuedNode(nextIndex,this.generateRndLeaf(game));
-				gameTree.addEdge(currentNode,gameTree.getNode(nextIndex));
+GameGraph.prototype.addRndLeavesToNode=function(gameTree, game,currentNodeIndex){
+	var currentNode = gameTree.getNode(currentNodeIndex);
+	if(!currentNode.getNeighbors().hasNextNode()){
+		var rndChilds = this.rndChildNumber(currentNode.getValue(),3);
+					
+		for (var o = 1; o <= rndChilds; o++) {
+			var nextIndex = gameTree.getOrder()+1;
 
-			}
+			gameTree.addValuedNode(nextIndex,this.generateRndLeaf(game));
+			gameTree.addEdge(currentNode,gameTree.getNode(nextIndex));
+
 		}
 	}
 }
+
+
+GameGraph.prototype.generateRndLeaves = function(gameTree,game, nbNodes){
+	for (var l = 1; l <= nbNodes; l++) {
+		
+		this.addRndLeavesToNode(gameTree, game,l);
+	}
+}
+
 GameGraph.prototype.rndChildNumber= function(type,maxNumber){
 	var rndChilds=0;
 	
