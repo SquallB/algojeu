@@ -285,8 +285,8 @@ function isObjectiveNodeFulfill(node) {
                 } else if(isTrue(currentChildValue)) {
                     nbTrue++;
                 }
-                if (nbTrue > 0) //console.log("isObjectiveNodeFulfill");
-                else //console.log("!isObjectiveNodeFulfill");
+                /*if (nbTrue > 0) console.log("isObjectiveNodeFulfill");
+                else console.log("!isObjectiveNodeFulfill"); */
 
                 return (currentChildValue.statut = (nbTrue > 0));
             }
@@ -302,8 +302,8 @@ function isObjectiveLeafFulfill(leaf) {
     if (value.objective === "kill_all" || value.objective === "survive") {
         return (value.statut = areAllDeadOrGone(leaf));
     } else if (value.objective === "get_token") {
-        if (value.thetoken !== undefined && !value.thetoken.exists && !value.thetoken.visible) //console.log("isObjectiveLeafFulfill : get_token");
-        else //console.log("!isObjectiveLeafFulfill : get_token");
+        /* if (value.thetoken !== undefined && !value.thetoken.exists && !value.thetoken.visible) console.log("isObjectiveLeafFulfill : get_token");
+        else console.log("!isObjectiveLeafFulfill : get_token"); */
 
         return (value.statut = (value.thetoken !== undefined && !value.thetoken.exists && !value.thetoken.visible));
     }
