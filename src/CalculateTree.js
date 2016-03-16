@@ -125,16 +125,16 @@ function calculateSequentialOrNode(node) {
         //console.log("TOKENWEAPON");
         //console.log(scoreToken);
       } else if (token.type === "health") {
-        scoreToken = -50;
+        scoreToken = -100;
         //console.log("TOKENHEALTH");
         //console.log(scoreToken);
       } else if (token.type === "shield") {
-        scoreToken = -token.value * 100;
+        scoreToken = -token.value * 200;
         //console.log("TOKENSHIELD");
         //console.log(scoreToken);
       } else if (token.type === "life") {
 
-        scoreToken = -100;
+        scoreToken = -500;
         //console.log("TOKENLIFE");
         //console.log(scoreToken);
       }
