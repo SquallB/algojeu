@@ -126,23 +126,45 @@ function calculateSequentialOrNode(node) {
 
 
     function calculateWaveKillAll(wave) {
+      //Calcul d'un coeffificent de difficulté pour le joeur, en fonction de son taux de réussite sur ce type de vague.
+      //On prend en compte le pourcentage de vague réussies, ainsi que les dégâts subis.
+      var playerSuccessRatio = 1;
+
       //On adapte le coefficient en fonction des résultats du joueur
       var playerSuccessCoeff = 1;
       if(stats['statsKillAllTotal'] > 0) {
-        playerSuccessCoeff /= (stats['statsKillAllSuccess'] / stats['statsKillAllTotal']);
+        playerSuccessRatio = stats['statsKillAllSuccess'] / stats['statsKillAllTotal'];
       }
 
+      var playerDamageRatio = 1;
+      if(stats['statsDamage'] > 0) {
+        playerDamageRatio = (stats['statsDamage'] - stats['statsSurviveDamage']) / stats['statsDamage'];
+      }
+
+      var playerSuccessCoeff = 1 / ((3 * playerSuccessRatio + playerDamageRatio) / 4);
+
+      //Le score d'une vague KillAll eqt en fonction du nombre d'ennemis
       //Le score d'une vague KillAll est en fonction du nombre d'ennemis
       //de leur vie et de leur arme
       return (wave.numberEnemy * wave.life * calculateWeapon(wave.weapon, false)) * playerSuccessCoeff;
     }
 
     function calculateWaveSurvive(wave) {
+      //Calcul d'un coeffificent de difficulté pour le joeur, en fonction de son taux de réussite sur ce type de vague.
+      //On prend en compte le pourcentage de vague réussies, ainsi que les dégâts subis.
+      var playerSuccessRatio = 1;
       //On adapte le coefficient en fonction des résultats du joueur
       var playerSuccessCoeff = 1;
       if(stats['statsSurviveTotal'] > 0) {
-        playerSuccessCoeff /= (stats['statsSurviveTotal'] / stats['statsSurviveTotal']);
+        playerSuccessRatio = stats['statsSuriveSuccess'] / stats['statsSurviveTotal'];
       }
+
+      var playerDamageRatio = 1;
+      if(stats['statsDamage'] > 0) {
+        playerDamageRatio = stats['statsSurviveDamage'] / stats['statsDamage'];
+      }
+
+      var playerSuccessCoeff = 1 / (playerSuccessRatio + playerDamageRatio);
 
       //Le score d'une vague Survive est en fonction de leur nombre,
       //de leur vitesse et de leur arme
