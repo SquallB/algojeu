@@ -1,5 +1,7 @@
 function createWeapon (weapon, game, isPlayer) {
-
+    //Méthode pour créer l'arme selon son nom
+    //Le booléen isPlayer est nécéssaire car les armes n'ont pas
+    //les même propriétés pour le joueur et les ennemis
     var weaponUpperCase = weapon.toUpperCase();
     var newWeapon;
 
@@ -40,7 +42,7 @@ Weapon.SingleBullet = function (game, isPlayer) {
     this.nextFire = 0;
     this.bulletSpeed = 600;
     this.dammage = 1;
-
+    //On choisit la vitesse de tir pour le joueur et l'ennemi
     if (isPlayer) {
         this.fireRate = 100;
     }else {
@@ -72,6 +74,7 @@ Weapon.SingleBullet.prototype.fire = function (source, isPlayer) {
     }else {
         var x = source.x - 8;
         var y = source.y + 8
+        //On tire les balles dans le sens inverse pour les ennemis
         this.getFirstExists(false).fire(x, y, 180, this.bulletSpeed,0, 0);
     }
 
@@ -90,6 +93,7 @@ Weapon.FrontAndBack = function (game, isPlayer) {
     this.nextFire = 0;
     this.bulletSpeed = 600;
     this.dammage = 1;
+    //On choisit la vitesse de tir pour le joueur et l'ennemi
     if (isPlayer) {
 
         this.fireRate = 100;
@@ -121,7 +125,7 @@ Weapon.FrontAndBack.prototype.fire = function (source, isPlayer) {
         var x = source.x - 10;
     }
     var y = source.y + 10;
-
+    //Les balles sont les mêmes pour le joueur et l'ennemi
     this.getFirstExists(false).fire(x, y, 0, this.bulletSpeed, 0, 0);
     this.getFirstExists(false).fire(x, y, 180, this.bulletSpeed, 0, 0);
 
@@ -140,6 +144,7 @@ Weapon.ThreeWay = function (game, isPlayer) {
     this.nextFire = 0;
     this.bulletSpeed = 600;
     this.dammage = 3;
+    //On choisit la vitesse de tir pour le joueur et l'ennemi
     if (isPlayer) {
 
         this.fireRate = 500;
@@ -162,6 +167,8 @@ Weapon.ThreeWay.prototype.constructor = Weapon.ThreeWay;
 Weapon.ThreeWay.prototype.fire = function (source, isPlayer) {
 
     if (this.game.time.time < this.nextFire) { return; }
+    //Les sprites de ces balles n'ont pas de sens. On a pas besoin de le retourner
+    //On les tirs donc dans le sens inverse pour les ennemis
     if (isPlayer) {
 
         var x = source.x + 10;
@@ -194,6 +201,7 @@ Weapon.EightWay = function (game,isPlayer) {
     this.nextFire = 0;
     this.bulletSpeed = 600;
     this.dammage=1;
+    //On choisit la vitesse de tir pour le joueur et l'ennemi
     if(isPlayer) {
 
         this.fireRate = 500;
@@ -250,6 +258,7 @@ Weapon.ScatterShot = function (game,isPlayer) {
     this.nextFire = 0;
     this.bulletSpeed = 600;
     this.dammage =1;
+    //On choisit la vitesse de tir pour le joueur et l'ennemi
     if(isPlayer) {
 
         this.fireRate = 40;
@@ -282,7 +291,7 @@ Weapon.ScatterShot.prototype.fire = function (source, isPlayer) {
 
     }else {
         var x = source.x - 16;
-
+        //On change l'angle du sprite pour les ennemi
         this.getFirstExists(false).fire(x, y, 180, this.bulletSpeed, 0, 0);
     }
 
@@ -301,6 +310,7 @@ Weapon.Beam = function (game,isPlayer) {
     this.nextFire = 0;
     this.bulletSpeed = 1000;
     this.dammage =2;
+    //On choisit la vitesse de tir pour le joueur et l'ennemi
     if(isPlayer){
         this.fireRate = 90;
 
@@ -351,6 +361,7 @@ Weapon.SplitShot = function (game, isPlayer) {
     this.nextFire = 0;
     this.bulletSpeed = 700;
     this.dammage = 4;
+    //On choisit la vitesse de tir pour le joueur et l'ennemi
     if (isPlayer) {
         this.fireRate = 200;
     }else {
@@ -385,9 +396,9 @@ Weapon.SplitShot.prototype.fire = function (source, isPlayer) {
         var x = source.x - 20;
         var y = source.y + 10;
 
-
+        //Arme trop puissante pour les enemis, réduction à seulement une balle
         this.getFirstExists(false).fire(x, y, 180, this.bulletSpeed, 0, 0);
-        
+
 
 
     }
@@ -409,6 +420,7 @@ Weapon.Rockets = function (game, isPlayer) {
     this.nextFire = 0;
     this.bulletSpeed = 400;
     this.dammage = 6;
+    //On choisit la vitesse de tir pour le joueur et l'ennemi
     if(isPlayer) {
         this.fireRate = 250;
 
@@ -433,7 +445,7 @@ Weapon.Rockets.prototype.constructor = Weapon.Rockets;
 Weapon.Rockets.prototype.fire = function (source, isPlayer) {
 
     if (this.game.time.time < this.nextFire) { return; }
-
+    //on donne un angle de tir pour les rockets
     if (isPlayer) {
         var x = source.x + 10;
         var y = source.y + 10;
@@ -464,6 +476,7 @@ Weapon.ScaleBullet = function (game,isPlayer) {
     this.nextFire = 0;
     this.bulletSpeed = 800;
     this.dammage =5;
+    //On choisit la vitesse de tir pour le joueur et l'ennemi
     if (isPlayer) {
 
         this.fireRate = 500;

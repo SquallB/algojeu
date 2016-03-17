@@ -1,8 +1,16 @@
-function calculateNode(node) {
+/*
+Classe qui calcul la difficulté d'un arbre
+*/
 
+
+function calculateNode(node) {
+/*
+Méthode pour calculer le score d'un noeud
+*/
   var score = 0;
   if (!isLeaf(node)) {
     var value = node.getValue();
+    //On ne fait pas de distinction entre un ET et un OU
     if (value.type === "ET//") {
       score = calculateParallelAndNode(node);
     } else if (value.type === "ET") {
@@ -14,6 +22,7 @@ function calculateNode(node) {
     }
 
   } else {
+    //Si c'est une feuille on calcul la difficulté de la feuille
     score = calculateLeaf(node);
   }
 
@@ -21,15 +30,21 @@ function calculateNode(node) {
 }
 
 function calculateSequentialOrNode(node) {
+//On récupére le score maximum des enfants
+
+  //On récupére les enfants
   var children = node.getNeighbors();
   var score = 0;
   while (children.hasNextNode()) {
+    //pour chaque enfants
     var child = children.getNextNode();
     var scoreTampo = 0;
+    //Si c'est une feuille on calcul le score de la feuille
     if (isLeaf(child)) {
       var object = calculateLeaf(child);
 
       scoreTampo = object.score;
+      //Sinon on calcul le score du noeud
     } else {
       scoreTampo = calculateNode(child);
     }
@@ -43,14 +58,20 @@ function calculateSequentialOrNode(node) {
 }
 
   function calculateParallelAndNode(node) {
+//n multiplie les scores de chaque enfants
+
     var children = node.getNeighbors();
     var score = 0;
     while (children.hasNextNode()) {
       var child = children.getNextNode();
+      //Si c'est une feuille on calcul le score de celle-ci
       if (isLeaf(child)) {
         var object = calculateLeaf(child);
+        //Si c'est un token on fait un % de celui-ci
+        //Afin de ne pas tomber sur des valeurs gigantesques
         if (object.isToken) {
           score = score * object.score / 1000 + score;
+          //Si c'est un noeud
         } else {
           score *= object.score;
         }
@@ -63,15 +84,16 @@ function calculateSequentialOrNode(node) {
   }
 
   function calculateSequentialAndNode(node) {
+    //Pour les Et sequentiel on additionne le score des enfants
     var children = node.getNeighbors();
     var score = 0;
     while (children.hasNextNode()) {
       var child = children.getNextNode();
+      //Si c'est une feuille
       if (isLeaf(child)) {
         var object = calculateLeaf(child);
-        console.log("object.score");
-        console.log(object.score);
         score += object.score;
+        //Si c'est un noeud
       } else {
         score += calculateNode(child);
       }
@@ -81,25 +103,21 @@ function calculateSequentialOrNode(node) {
 }
 
     function calculateLeaf(node) {
+      //Return un objet : {Score ; isToken}
+      /*IsToken permet de savoir si la feuille est un objetif de type get_token
+      Dans ce cas le calcul différe pour les ET et OU paralléle
+      */
       var score = 0;
       var isToken = false;
       var value = node.getValue();
       if (value.objective === "survive") {
         score = calculateWaveSurvive(value.vague);
-        //console.log("SURVIVE");
-        //console.log(score);
       } else if (value.objective === "kill_all") {
         score = calculateWaveKillAll(value.vague);
-        //console.log("KILLALL");
-        //console.log(score);
       } else if (value.objective === "get_token") {
         score = calculateToken(value.token);
         isToken = true;
-        //console.log("TOKEN");
-        //console.log(score);
       }
-      //console.log("LEAF");
-      //console.log(score);
       return {
         score: score,
         isToken: isToken
@@ -109,34 +127,35 @@ function calculateSequentialOrNode(node) {
 
     function calculateWaveKillAll(wave) {
 
+      //Le score d'une vague KillAll eqt en fonction du nombre d'ennemis
+      //de leur vie et de leur arme
       return score = wave.numberEnemy * wave.life * calculateWeapon(wave.weapon, false);
     }
 
     function calculateWaveSurvive(wave) {
 
+      //Le score d'une vague Survive est en fonction de leur nombre,
+      //de leur vitesse et de leur arme
       return score = 2000 / wave.speed * calculateWeapon(wave.weapon, false) * wave.numberEnemy;
     }
 
     function calculateToken(token) {
 
+      //renvoie une valeur suivant le Token
+      //La valeur est négative car il aide le joueur et réduit la difficulté
       var scoreToken=0;
       if (token.type === "weapon") {
+          //Les tokens d'armes ne changent pas grand chose car ils durent moins
+          //de 6 secondes
         scoreToken = -20;
-        //console.log("TOKENWEAPON");
-        //console.log(scoreToken);
       } else if (token.type === "health") {
         scoreToken = -100;
-        //console.log("TOKENHEALTH");
-        //console.log(scoreToken);
       } else if (token.type === "shield") {
+        //les Token boucliers font une vrai différence
         scoreToken = -token.value * 200;
-        //console.log("TOKENSHIELD");
-        //console.log(scoreToken);
       } else if (token.type === "life") {
-
+        //Tout comme ceux de vie
         scoreToken = -500;
-        //console.log("TOKENLIFE");
-        //console.log(scoreToken);
       }
       console.log("TOKEN");
       console.log(scoreToken);
@@ -145,6 +164,8 @@ function calculateSequentialOrNode(node) {
 
     function calculateWeapon(weapon, isPlayer) {
 
+      //On différencie le score pour le joueur ou les ennemis.
+      //Ils n'ont pas les mêmes propriétés d'armes.
       var scorePlayer=0;
       var scoreEnemie=0;
       var weaponUpperCase = weapon.toUpperCase();

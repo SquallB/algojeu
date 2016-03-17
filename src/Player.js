@@ -1,9 +1,12 @@
 var Player = function(game, posX, posY, weapon, life, shield, speed) {
   Phaser.Sprite.call(this, game, posX, posY, 'ship');
-
+  //Le joueur a une arme
   this.weapon = weapon;
+  //une barre de vie/santé/bouclier
   this.lifeBar = new LifeBar(game, life || 100);
+  //un bouclier
   this.lifeBar.shield = shield || 0;
+  //une vitesse
   this.speed = speed || 500;
 };
 
