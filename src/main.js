@@ -1,3 +1,4 @@
+var Game =  { preload: preload, create: create, update: update, render: render };
 var game = new Phaser.Game(800, 600, Phaser.CANVAS, 'game', { preload: preload, create: create, update: update, render: render });
 var numberWave = -1;
 var player;
@@ -12,6 +13,8 @@ var counter = 0;
 var stats = {};
 var nbKills = 0;
 var isAllDead;
+var score = 0;
+
 
 function initInfos(text, color = "black") {
     $("#info").html(text);
@@ -28,6 +31,38 @@ function writeInfos(text, color = "black") {
     $("#info").css("color", color);
 }
 
+var Menu = {
+
+    preload : function() {
+        // Loading images is required so that later on we can create sprites based on the them.
+        // The first argument is how our image will be refered to,
+        // the second one is the path to our file.
+    },
+
+    create: function () {
+        // Add a sprite to your game, here the sprite will be the game's logo
+        // Parameters are : X , Y , image name (see above)
+
+        var style = { font: "65px Arial", fill: "#ff0044", align: "center" };
+
+        var text = game.add.text(game.world.centerX, game.world.centerY, "- phaser -\nwith a sprinkle of\npixi dust", style);
+
+        text.anchor.set(0.5);
+        this.add.button(0, 0, text, this.startGame, this);
+    },
+
+    startGame: function () {
+
+        // Change the state to the actual game.
+
+        this.state.start('game');
+
+    }
+
+};
+game.state.add('Menu', Menu);
+game.state.add('game', Game);
+game.state.start('Menu');
 function preload() {
     game.load.image('starfield', 'assets/starfield.png');
     game.load.image('ship', 'assets/thrust_ship.png');
@@ -102,7 +137,8 @@ function update() {
         //console.log("round: " + counter);
         if(loadLevel()) {
             var time = new Date(game.time.now - game.time.pauseDuration);
-            initInfos("LEVEL FINISHED ! CONGRATULATIONS !<br/>Time: " + time.getUTCMinutes() + ":" + time.getUTCSeconds() , "green");
+            score = calculateScore();
+            initInfos("LEVEL FINISHED ! CONGRATULATIONS !<br/>Time: " + time.getUTCMinutes() + ":" + time.getUTCSeconds() + '<br/> Score : ' + score, "green");
             game.gamePaused();
             updateStats(player);
         }
@@ -492,6 +528,7 @@ function getStats() {
 
 function updateStats() {
     stats['statsNumber']++;
+    stats['statsScore'] = (stats['statsScore'] + score) / stats['statsNumber'];
     stats['statsLife'] = (stats['statsLife'] + player.lifeBar.lives * player.lifeBar.fullHeathValue + player.lifeBar.value) / stats['statsNumber'];
     stats['statsTime'] = (stats['statsTime'] + game.time.now) / stats['statsNumber'];
     stats['statsKills'] = (stats['statsKills'] + nbKills) / stats['statsNumber'];
@@ -503,4 +540,12 @@ function saveStats(player) {
     for(property in stats) {
         localStorage.setItem(property, stats[property]);
     }
+}
+
+function calculateScore() {
+    var difficultyCoeff = calculateNode(level.getRoot()) / 150;
+    var killScore = (nbKills / enemies.length) * 1500;
+    var lifeScore = (player.lifeBar.value + player.lifeBar.lives * player.lifeBar.fullHeathValue) / 4;
+    var timeScore = 100000000 / game.time.now;
+    return Math.round(difficultyCoeff * (killScore + lifeScore + timeScore));
 }
