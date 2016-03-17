@@ -16,6 +16,12 @@ var isAllDead;
 var score = 0;
 var damageCounter = 0;
 var difficultyTree=750;
+var killAllTime = 0;
+var surviveDamage = 0;
+var killAllSuccess = 0;
+var killAllTotal = 0;
+var surviveSuccess = 0;
+var surviveTotal = 0;
 
 function initInfos(text, color = "black") {
     $("#info").html(text);
@@ -327,12 +333,16 @@ function loadLeaf(node) {
     if(value.objective === "survive") {
         //console.log("createLeafSurvive");
         //console.log(node);
+        node.startDamage = damageCounter;
+        surviveTotal++;
         numberWave++;
         value.enemies = createSurviveWave(value.vague);
         writeInfos("Survive Wave of " + value.vague.numberEnemy + " enemies.");
     } else if(value.objective === "kill_all") {
         //console.log("createLeafKillAll");
         //console.log(node);
+        node.startTime = game.time.now;
+        killAllTotal++;
         numberWave++;
         value.enemies = createKillAllWave(value.vague);
         writeInfos("Kill all " + value.vague.numberEnemy + " enemies.");
@@ -466,6 +476,16 @@ function isObjectiveLeafFulfill(leaf) {
     if (value.statut === undefined) return false;
 
     if (value.objective === "kill_all" || value.objective === "survive") {
+        if(value.objective === "kill_all") {
+            var timeToClear = game.time.now - leaf.startTime;
+            killAllTime = (killAllTime + timeToClear) / 2;
+            killAllSuccess++;
+        }
+        else if(value.objective = "survive") {
+            var damageDiff = damageCounter - leaf.startDamage;
+            surviveDamage = (surviveDamage + damageDiff) / 2;
+            surviveSuccess++;
+        }
         return (value.statut = areAllDeadOrGone(leaf));
     } else if (value.objective === "get_token") {
         /* if (value.thetoken !== undefined && !value.thetoken.exists && !value.thetoken.visible) console.log("isObjectiveLeafFulfill : get_token");
@@ -564,54 +584,41 @@ function createToken(token, posX, posY) {
     return thetoken;
 }
 
+function getStatValue(statName) {
+    var stat = localStorage.getItem(statName);
+    if(stat === null) {
+        stats['statName'] = 0;
+    }
+    else {
+        stats['statName'] = parseFloat(stat);
+    }
+}
+
 function getStats() {
-    var stat = localStorage.getItem('statsNumber');
-    if(stat === null) {
-        stats['statsNumber'] = 0;
-    }
-    else {
-        stats['statsNumber'] = parseInt(stat);
-    }
-
-    stat = localStorage.getItem('statsScore');
-    if(stat === null) {
-        stats['statsScore'] = 0;
-    }
-    else {
-        stats['statsScore'] = parseInt(stat);
-    }
-
-    stat = localStorage.getItem('statsDamage');
-    if(stat === null) {
-        stats['statsDamage'] = 0;
-    }
-    else {
-        stats['statsDamage'] = parseFloat(stat);
-    }
-
-    stat = localStorage.getItem('statsTime');
-    if(stat === null) {
-        stats['statsTime'] = 0;
-    }
-    else {
-        stats['statsTime'] = parseFloat(stat);
-    }
-
-    stat = localStorage.getItem('statsKills');
-    if(stat === null) {
-        stats['statsKills'] = 0;
-    }
-    else {
-        stats['statsKills'] = parseFloat(stat);
-    }
+    getStatValue('statsScore');
+    getStatValue('statsDamage');
+    getStatValue('statsTime');
+    getStatValue('statsKills');
+    getStatValue('statsKillAllTime');
+    getStatValue('statsSurviveDamage');
+    getStatValue('statsKillAllSuccess');
+    getStatValue('statsKillAllTotal');
+    getStatValue('statsSuriveSuccess');
+    getStatValue('statsSurviveTotal');
 }
 
 function updateStats() {
     stats['statsNumber']++;
-    stats['statsScore'] = (stats['statsScore'] + score) / stats['statsNumber'];
-    stats['statsDamage'] = (stats['statsDamage'] + damageCounter) / stats['statsNumber'];
-    stats['statsTime'] = (stats['statsTime'] + game.time.now) / stats['statsNumber'];
-    stats['statsKills'] = (stats['statsKills'] + (nbKills / enemies.length)) / stats['statsNumber'];
+    stats['statsScore'] = (stats['statsScore'] + score) / 2;
+    stats['statsDamage'] = (stats['statsDamage'] + damageCounter) / 2;
+    stats['statsTime'] = (stats['statsTime'] + game.time.now) / 2;
+    stats['statsKills'] = (stats['statsKills'] + (nbKills / enemies.length)) / 2;
+    stats['statsKillAllTime'] = (stats['statsKillAllTime'] + killAllTime) / 2;
+    stats['statsSurviveDamage'] = (stats['statsSurviveDamage'] + surviveDamage) / 2;
+    stats['statsKillAllSuccess'] = stats['statsKillAllSuccess'] + killAllSuccess;
+    stats['statsKillAllTotal'] = stats['statsKillAllTotal'] + killAllTotal;
+    stats['statsSuriveSuccess'] = stats['statsSuriveSuccess'] + surviveSuccess;
+    stats['statsSurviveTotal'] = stats['statsSurviveTotal'] + surviveTotal;
 
     saveStats();
 }
