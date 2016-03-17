@@ -249,22 +249,22 @@ var initializeInterfaceFor1Graph = function(graph, nameGraph, heightSvg, xSvg, y
 	 *	Fonction perméttant d'afficher la vue texte (textView et tableView) choisi
 	 */
 	
+	$("#"+nameGraph+"textView").empty();
+	var svg = $("svg");
+	svg.empty();
 
 	var modele = new ConcreteGraph(xSvg, ySvg, graph, heightSvg, 5	, nameGraph, nameGraph);
 		modele.addView(new graphView(xSvg, ySvg, modele, graph, heightSvg));
 		modele.addView(new textView(graph, nameGraph, modele));
 		modele.notifyObservers();
 
-	var svg = $("svg");
+	
 	//Boucle perméttant de classer les différentes feuilles de déssins svg dans une div.
 	for(var i=0; i<svg.length; i++) {
 		if(parseInt(svg[i].getAttribute("height")) === heightSvg) {
 			$("#"+nameGraph+"graphView").append(svg[i]);
 		}
 	}
-
-	//On cache la vue tableView pour commencer.
-	$("#"+nameGraph+"tableView").css("visibility", "hidden");
 
 
 }
