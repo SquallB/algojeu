@@ -221,7 +221,7 @@ function create() {
     difficultyTree = calculateNode(rootNode);
 
     //On rajoute une detection de touche
-    cursors = game.input.keyboard.createCursorKeys
+    cursors = game.input.keyboard.createCursorKeys();
     game.input.keyboard.addKeyCapture([ Phaser.Keyboard.SPACEBAR ]);
 
     //on créer un groupe d'ennemis
