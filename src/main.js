@@ -37,6 +37,7 @@ var Menu = {
         // Loading images is required so that later on we can create sprites based on the them.
         // The first argument is how our image will be refered to,
         // the second one is the path to our file.
+        game.load.image('play', 'spaceship.png');
     },
 
     create: function () {
@@ -44,11 +45,41 @@ var Menu = {
         // Parameters are : X , Y , image name (see above)
 
         var style = { font: "65px Arial", fill: "#ff0044", align: "center" };
+        
+        var button = this.add.button(0, 0, 'play', this.startGame, this);
+        button.width = 800;
+        button.height = 600;
+    },
 
-        var text = game.add.text(game.world.centerX, game.world.centerY, "- phaser -\nwith a sprinkle of\npixi dust", style);
+    startGame: function () {
 
-        text.anchor.set(0.5);
-        this.add.button(0, 0, text, this.startGame, this);
+        // Change the state to the actual game.
+
+        this.state.start('game');
+
+    }
+
+};
+
+
+var CompleteMenu = {
+
+    preload : function() {
+        // Loading images is required so that later on we can create sprites based on the them.
+        // The first argument is how our image will be refered to, 
+        // the second one is the path to our file.
+        game.load.image('play', 'spaceship.png');
+    },
+
+    create: function () {
+        // Add a sprite to your game, here the sprite will be the game's logo
+        // Parameters are : X , Y , image name (see above) 
+        
+        var style = { font: "65px Arial", fill: "#ff0044", align: "center" };
+        
+        var button = this.add.button(0, 0, 'play', this.startGame, this);
+        button.width = 800;
+        button.height = 600;
     },
 
     startGame: function () {
@@ -62,6 +93,7 @@ var Menu = {
 };
 game.state.add('Menu', Menu);
 game.state.add('game', Game);
+game.state.add('CompleteMenu', CompleteMenu);
 game.state.start('Menu');
 function preload() {
     game.load.image('starfield', 'assets/starfield.png');
@@ -139,8 +171,11 @@ function update() {
             var time = new Date(game.time.now - game.time.pauseDuration);
             score = calculateScore();
             initInfos("LEVEL FINISHED ! CONGRATULATIONS !<br/>Time: " + time.getUTCMinutes() + ":" + time.getUTCSeconds() + '<br/> Score : ' + score, "green");
-            game.gamePaused();
+            
             updateStats(player);
+           
+            game.state.start('CompleteMenu',true,false);
+
         }
 
         if(player.getLife() === 0) {
