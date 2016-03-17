@@ -127,7 +127,8 @@ function create() {
 
     background = game.add.tileSprite(0, 0, 800, 600, 'starfield');
 
-    player = new Player(game, 100, 370, new Weapon.SingleBullet(game, true));
+    getStats();
+    player = generatePlayer(stats,game);
 
     game.add.existing(player);
     game.physics.enable(player, Phaser.Physics.ARCADE);
@@ -156,8 +157,6 @@ function create() {
 
     //Initialisation de la div #info
     initInfos("GAME STARTED", "green");
-
-    getStats();
 }
 
 function setupInvader (invader) {
@@ -539,23 +538,23 @@ function getStats() {
     }
 
     stat = localStorage.getItem('statsScore');
-    if(stats['statsScore'] === null) {
+    if(stat === null) {
         stats['statsScore'] = 0;
     }
     else {
         stats['statsScore'] = parseInt(stat);
     }
 
-    stat = localStorage.getItem('statsLife');
-    if(stats['statsLife'] === null) {
-        stats['statsLife'] = 0;
+    stat = localStorage.getItem('statsDamage');
+    if(stat === null) {
+        stats['statsDamage'] = 0;
     }
     else {
-        stats['statsLife'] = parseFloat(stat);
+        stats['statsDamage'] = parseFloat(stat);
     }
 
     stat = localStorage.getItem('statsTime');
-    if(stats['statsTime'] === null) {
+    if(stat === null) {
         stats['statsTime'] = 0;
     }
     else {
@@ -563,7 +562,7 @@ function getStats() {
     }
 
     stat = localStorage.getItem('statsKills');
-    if(stats['statsKills'] === null) {
+    if(stat === null) {
         stats['statsKills'] = 0;
     }
     else {
@@ -574,9 +573,9 @@ function getStats() {
 function updateStats() {
     stats['statsNumber']++;
     stats['statsScore'] = (stats['statsScore'] + score) / stats['statsNumber'];
-    stats['statsLife'] = (stats['statsLife'] + player.lifeBar.lives * player.lifeBar.fullHeathValue + player.lifeBar.value) / stats['statsNumber'];
+    stats['statsDamage'] = (stats['statsDamage'] + damageCounter) / stats['statsNumber'];
     stats['statsTime'] = (stats['statsTime'] + game.time.now) / stats['statsNumber'];
-    stats['statsKills'] = (stats['statsKills'] + nbKills) / stats['statsNumber'];
+    stats['statsKills'] = (stats['statsKills'] + (nbKills / enemies.length)) / stats['statsNumber'];
 
     saveStats();
 }
