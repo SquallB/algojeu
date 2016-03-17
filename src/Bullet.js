@@ -5,7 +5,7 @@ var Bullet = function (game, key, damage) {
     this.texture.baseTexture.scaleMode = PIXI.scaleModes.NEAREST;
 
     this.anchor.set(0.5);
-
+    //On detruit les balles lorsqu'elles sortent de la fenetre
     this.checkWorldBounds = true;
     this.outOfBoundsKill = true;
     this.exists = false;
@@ -13,7 +13,7 @@ var Bullet = function (game, key, damage) {
 
     this.tracking = false;
     this.scaleSpeed = 0;
-
+    //Par défaut elles font 1 de dégat
     this.damage = damage || 1;
 
 };
@@ -28,7 +28,7 @@ Bullet.prototype.fire = function (x, y, angle, speed, gx, gy) {
 
     this.reset(x, y);
     this.scale.set(1);
-
+    //on donne une vitesse et un angle aux balles
     this.game.physics.arcade.velocityFromAngle(angle, speed, this.body.velocity);
 
     this.angle = angle;
