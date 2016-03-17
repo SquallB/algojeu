@@ -11,6 +11,7 @@ var level;
 var counter = 0;
 var stats = {};
 var nbKills = 0;
+var score = 0;
 
 function initInfos(text, color = "black") {
     $("#info").html(text);
@@ -96,7 +97,8 @@ function update() {
         //console.log("round: " + counter);
         if(loadLevel()) {
             var time = new Date(game.time.now - game.time.pauseDuration);
-            initInfos("LEVEL FINISHED ! CONGRATULATIONS !<br/>Time: " + time.getUTCMinutes() + ":" + time.getUTCSeconds() , "green");
+            score = calculateScore();
+            initInfos("LEVEL FINISHED ! CONGRATULATIONS !<br/>Time: " + time.getUTCMinutes() + ":" + time.getUTCSeconds() + '<br/> Score : ' + score, "green");
             game.gamePaused();
             updateStats(player);
         }
@@ -475,6 +477,7 @@ function getStats() {
 
 function updateStats() {
     stats['statsNumber']++;
+    stats['statsScore'] = (stats['statsScore'] + score) / stats['statsNumber'];
     stats['statsLife'] = (stats['statsLife'] + player.lifeBar.lives * player.lifeBar.fullHeathValue + player.lifeBar.value) / stats['statsNumber'];
     stats['statsTime'] = (stats['statsTime'] + game.time.now) / stats['statsNumber'];
     stats['statsKills'] = (stats['statsKills'] + nbKills) / stats['statsNumber'];
@@ -486,4 +489,12 @@ function saveStats(player) {
     for(property in stats) {
         localStorage.setItem(property, stats[property]);
     }
+}
+
+function calculateScore() {
+    var difficultyCoeff = calculateNode(level.getRoot()) / 150;
+    var killScore = (nbKills / enemies.length) * 1500;
+    var lifeScore = (player.lifeBar.value + player.lifeBar.lives * player.lifeBar.fullHeathValue) / 4;
+    var timeScore = 100000000 / game.time.now;
+    return Math.round(difficultyCoeff * (killScore + lifeScore + timeScore));
 }
