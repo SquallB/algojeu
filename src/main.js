@@ -12,8 +12,9 @@ var level;
 var counter = 0;
 var stats = {};
 var nbKills = 0;
-var damageCounter = 0;
+var isAllDead;
 var score = 0;
+var damageCounter = 0;
 
 function initInfos(text, color = "black") {
     $("#info").html(text);
@@ -34,8 +35,40 @@ var Menu = {
 
     preload : function() {
         // Loading images is required so that later on we can create sprites based on the them.
+        // The first argument is how our image will be refered to,
+        // the second one is the path to our file.
+        game.load.image('play', 'spaceship.png');
+    },
+
+    create: function () {
+        // Add a sprite to your game, here the sprite will be the game's logo
+        // Parameters are : X , Y , image name (see above)
+
+        var style = { font: "65px Arial", fill: "#ff0044", align: "center" };
+        
+        var button = this.add.button(0, 0, 'play', this.startGame, this);
+        button.width = 800;
+        button.height = 600;
+    },
+
+    startGame: function () {
+
+        // Change the state to the actual game.
+
+        this.state.start('game');
+
+    }
+
+};
+
+
+var CompleteMenu = {
+
+    preload : function() {
+        // Loading images is required so that later on we can create sprites based on the them.
         // The first argument is how our image will be refered to, 
         // the second one is the path to our file.
+        game.load.image('play', 'spaceship.png');
     },
 
     create: function () {
@@ -43,11 +76,10 @@ var Menu = {
         // Parameters are : X , Y , image name (see above) 
         
         var style = { font: "65px Arial", fill: "#ff0044", align: "center" };
-
-        var text = game.add.text(game.world.centerX, game.world.centerY, "- phaser -\nwith a sprinkle of\npixi dust", style);
-
-        text.anchor.set(0.5);
-        this.add.button(0, 0, text, this.startGame, this);
+        
+        var button = this.add.button(0, 0, 'play', this.startGame, this);
+        button.width = 800;
+        button.height = 600;
     },
 
     startGame: function () {
@@ -61,6 +93,7 @@ var Menu = {
 };
 game.state.add('Menu', Menu);
 game.state.add('game', Game);
+game.state.add('CompleteMenu', CompleteMenu);
 game.state.start('Menu');
 function preload() {
     game.load.image('starfield', 'assets/starfield.png');
@@ -84,10 +117,8 @@ function create() {
 
     background = game.add.tileSprite(0, 0, 800, 600, 'starfield');
 
-    stats = {};
-    getStats();
-    player = generatePlayer(stats, game);
-    
+    player = new Player(game, 100, 370, new Weapon.SingleBullet(game, true));
+
     game.add.existing(player);
     game.physics.enable(player, Phaser.Physics.ARCADE);
     player.body.collideWorldBounds = true;
@@ -95,6 +126,8 @@ function create() {
     level = gameGraph.generateGraph(5,game);
     var rootNode = level.getRoot();
     var rootValue = rootNode.getValue();
+    console.log(calculateNode(rootNode));
+
 
     cursors = game.input.keyboard.createCursorKeys();
     game.input.keyboard.addKeyCapture([ Phaser.Keyboard.SPACEBAR ]);
@@ -114,6 +147,8 @@ function create() {
 
     //Initialisation de la div #info
     initInfos("GAME STARTED", "green");
+
+    getStats();
 }
 
 function setupInvader (invader) {
@@ -121,7 +156,12 @@ function setupInvader (invader) {
     invader.anchor.y = 0.5;
     invader.animations.add('kaboom');
 }
+function isAllDeadEnnemies(enemy) {
+    if (enemy.posX>0 && enemy.life>0){
 
+        isAllDead = false;
+    }
+}
 function update() {
 
     counter++;
@@ -131,13 +171,26 @@ function update() {
             var time = new Date(game.time.now - game.time.pauseDuration);
             score = calculateScore();
             initInfos("LEVEL FINISHED ! CONGRATULATIONS !<br/>Time: " + time.getUTCMinutes() + ":" + time.getUTCSeconds() + '<br/> Score : ' + score, "green");
-            game.gamePaused();
+            
             updateStats(player);
+           
+            game.state.start('CompleteMenu',true,false);
+
         }
 
         if(player.getLife() === 0) {
             initInfos("NO MORE LIVES ! GAME LOST !", "red");
             game.gamePaused();
+        }
+    }
+
+    //Réinitialisation du compteur de vague pour remmettre les enemies sur
+    //le bord droit de la fenetre
+    if (numberWave > -1) {
+        isAllDead = true;
+        enemies.forEach(isAllDeadEnnemies, this);
+        if(isAllDead) {
+            numberWave = -1;
         }
     }
 
@@ -176,6 +229,7 @@ function update() {
             }
         }
     });
+
 }
 
 function render() { }
@@ -201,7 +255,7 @@ function bulletsCollisionHandler(bullet, enemy) {
 
 function playerCollisionHandler(player, enemy) {
     player.lifeBar.changeLife(-enemy.damage);
-    damageCounter += enemy.damage;
+    damageCounter += damage;
     var explosion = explosions.getFirstExists(false);
     explosion.reset(enemy.body.x, enemy.body.y);
     explosion.play('kaboom', 30, false, true);
@@ -476,23 +530,23 @@ function getStats() {
     }
 
     stat = localStorage.getItem('statsScore');
-    if(stat === null) {
+    if(stats['statsScore'] === null) {
         stats['statsScore'] = 0;
     }
     else {
         stats['statsScore'] = parseInt(stat);
     }
 
-    stat = localStorage.getItem('statsDamage');
-    if(stat === null) {
-        stats['statsDamage'] = 0;
+    stat = localStorage.getItem('statsLife');
+    if(stats['statsLife'] === null) {
+        stats['statsLife'] = 0;
     }
     else {
-        stats['statsDamage'] = parseFloat(stat);
+        stats['statsLife'] = parseFloat(stat);
     }
 
     stat = localStorage.getItem('statsTime');
-    if(stat === null) {
+    if(stats['statsTime'] === null) {
         stats['statsTime'] = 0;
     }
     else {
@@ -500,7 +554,7 @@ function getStats() {
     }
 
     stat = localStorage.getItem('statsKills');
-    if(stat === null) {
+    if(stats['statsKills'] === null) {
         stats['statsKills'] = 0;
     }
     else {
@@ -511,9 +565,9 @@ function getStats() {
 function updateStats() {
     stats['statsNumber']++;
     stats['statsScore'] = (stats['statsScore'] + score) / stats['statsNumber'];
-    stats['statsDamage'] = (stats['statsDamage'] + damageCounter) / stats['statsNumber'];
+    stats['statsLife'] = (stats['statsLife'] + player.lifeBar.lives * player.lifeBar.fullHeathValue + player.lifeBar.value) / stats['statsNumber'];
     stats['statsTime'] = (stats['statsTime'] + game.time.now) / stats['statsNumber'];
-    stats['statsKills'] = (stats['statsKills'] + (nbKills / enemies.length)) / stats['statsNumber'];
+    stats['statsKills'] = (stats['statsKills'] + nbKills) / stats['statsNumber'];
 
     saveStats();
 }
