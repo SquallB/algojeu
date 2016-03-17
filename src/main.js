@@ -15,6 +15,7 @@ var nbKills = 0;
 var isAllDead;
 var score = 0;
 var damageCounter = 0;
+var difficultyTree=750;
 
 function initInfos(text, color = "black") {
     $("#info").html(text);
@@ -95,7 +96,7 @@ var CompleteMenu = {
     startGame: function () {
 
         // Change the state to the actual game.
-
+        difficultyTree += difficultyTree*20/100;
         this.state.start('game');
 
     }
@@ -129,7 +130,7 @@ var GameOverMenu = {
     startGame: function () {
 
         // Change the state to the actual game.
-
+        difficultyTree = difficultyTree - difficultyTree*20/100;
         this.state.start('game');
 
     }
@@ -169,9 +170,10 @@ function create() {
     game.physics.enable(player, Phaser.Physics.ARCADE);
     player.body.collideWorldBounds = true;
 
-    level = gameGraph.generateValidGraph(game,750);
+    level = gameGraph.generateValidGraph(game,difficultyTree);
     var rootNode = level.getRoot();
     var rootValue = rootNode.getValue();
+    difficultyTree = calculateNode(rootNode);
 
 
     cursors = game.input.keyboard.createCursorKeys();
@@ -181,7 +183,6 @@ function create() {
     enemies.enableBody = true;
     enemies.physicsBodyType = Phaser.Physics.ARCADE;
 
-    //loadLevel("tree_2");
 
     explosions = game.add.group();
     explosions.createMultiple(30, 'kaboom');
