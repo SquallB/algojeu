@@ -164,7 +164,7 @@ function calculateSequentialOrNode(node) {
         playerDamageRatio = stats['statsSurviveDamage'] / stats['statsDamage'];
       }
 
-      var playerSuccessCoeff = 1 / (playerSuccessRatio + playerDamageRatio);
+      var playerSuccessCoeff = 1 / ((playerSuccessRatio + playerDamageRatio / 2));
 
       //Le score d'une vague Survive est en fonction de leur nombre,
       //de leur vitesse et de leur arme
