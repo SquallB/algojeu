@@ -101,9 +101,44 @@ var CompleteMenu = {
     }
 
 };
+
+var GameOverMenu = {
+
+    preload : function() {
+        // Loading images is required so that later on we can create sprites based on the them.
+        // The first argument is how our image will be refered to,
+        // the second one is the path to our file.
+        game.load.image('play', 'spaceship.png');
+    },
+
+    create: function () {
+        // Add a sprite to your game, here the sprite will be the game's logo
+        // Parameters are : X , Y , image name (see above)
+
+        var style = { font: "65px Arial", fill: "#ff0044", align: "center" };
+
+        var button = this.add.button(0, 0, 'play', this.startGame, this);
+        button.width = 800;
+        button.height = 600;
+        stateText = game.add.text(game.world.centerX,game.world.centerY,' ', { font: '70px Arial', fill: '#FF0000' });
+        stateText.anchor.setTo(0.5, 0.5);
+        stateText.text = "GameOver\n Click to try Again !";
+        stateText.visible = true;
+    },
+
+    startGame: function () {
+
+        // Change the state to the actual game.
+
+        this.state.start('game');
+
+    }
+
+};
 game.state.add('Menu', Menu);
 game.state.add('game', Game);
 game.state.add('CompleteMenu', CompleteMenu);
+game.state.add('GameOverMenu', GameOverMenu);
 game.state.start('Menu');
 function preload() {
     game.load.image('starfield', 'assets/starfield.png');
@@ -188,7 +223,7 @@ function update() {
 
         if(player.getLife() === 0) {
             initInfos("NO MORE LIVES ! GAME LOST !", "red");
-            game.gamePaused();
+            game.state.start('GameOverMenu', true, false);
         }
     }
 
