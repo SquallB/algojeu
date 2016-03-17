@@ -1,3 +1,4 @@
+var Game =  { preload: preload, create: create, update: update, render: render };
 var game = new Phaser.Game(800, 600, Phaser.CANVAS, 'game', { preload: preload, create: create, update: update, render: render });
 var numberWave = -1;
 var player;
@@ -28,6 +29,38 @@ function writeInfos(text, color = "black") {
     $("#info").css("color", color);
 }
 
+var Menu = {
+
+    preload : function() {
+        // Loading images is required so that later on we can create sprites based on the them.
+        // The first argument is how our image will be refered to, 
+        // the second one is the path to our file.
+    },
+
+    create: function () {
+        // Add a sprite to your game, here the sprite will be the game's logo
+        // Parameters are : X , Y , image name (see above) 
+        
+        var style = { font: "65px Arial", fill: "#ff0044", align: "center" };
+
+        var text = game.add.text(game.world.centerX, game.world.centerY, "- phaser -\nwith a sprinkle of\npixi dust", style);
+
+        text.anchor.set(0.5);
+        this.add.button(0, 0, text, this.startGame, this);
+    },
+
+    startGame: function () {
+
+        // Change the state to the actual game.
+
+        this.state.start('game');
+
+    }
+
+};
+game.state.add('Menu', Menu);
+game.state.add('game', Game);
+game.state.start('Menu');
 function preload() {
     game.load.image('starfield', 'assets/starfield.png');
     game.load.image('ship', 'assets/thrust_ship.png');
