@@ -11,6 +11,7 @@ var level;
 var counter = 0;
 var stats = {};
 var nbKills = 0;
+var isAllDead;
 
 function initInfos(text, color = "black") {
     $("#info").html(text);
@@ -88,7 +89,12 @@ function setupInvader (invader) {
     invader.anchor.y = 0.5;
     invader.animations.add('kaboom');
 }
+function isAllDeadEnnemies(enemy) {
+    if (enemy.posX>0 && enemy.life>0){
 
+        isAllDead = false;
+    }
+}
 function update() {
 
     counter++;
@@ -104,6 +110,16 @@ function update() {
         if(player.getLife() === 0) {
             initInfos("NO MORE LIVES ! GAME LOST !", "red");
             game.gamePaused();
+        }
+    }
+
+    //Réinitialisation du compteur de vague pour remmettre les enemies sur
+    //le bord droit de la fenetre
+    if (numberWave > -1) {
+        isAllDead = true;
+        enemies.forEach(isAllDeadEnnemies, this);
+        if(isAllDead) {
+            numberWave = -1;
         }
     }
 
@@ -142,6 +158,7 @@ function update() {
             }
         }
     });
+
 }
 
 function render() { }
