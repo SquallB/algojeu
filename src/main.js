@@ -136,7 +136,6 @@ function create() {
     level = gameGraph.generateGraph(5,game);
     var rootNode = level.getRoot();
     var rootValue = rootNode.getValue();
-    console.log(calculateNode(rootNode));
 
 
     cursors = game.input.keyboard.createCursorKeys();
@@ -265,7 +264,7 @@ function bulletsCollisionHandler(bullet, enemy) {
 
 function playerCollisionHandler(player, enemy) {
     player.lifeBar.changeLife(-enemy.damage);
-    damageCounter += damage;
+    damageCounter += enemy.damage;
     var explosion = explosions.getFirstExists(false);
     explosion.reset(enemy.body.x, enemy.body.y);
     explosion.play('kaboom', 30, false, true);

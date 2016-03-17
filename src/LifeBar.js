@@ -2,7 +2,7 @@ function LifeBar(gameModel, lives, value){
   //Valeur courante de la barre de santé
   this.value = value || 100;
   //Valeur maximum de la barre de santé
-  this.fullHeathValue=value;
+  this.fullHeathValue = value || 100;
   //Nombre de vies
   this.lives = lives || 3;
   //Valeur du bouclier
@@ -93,8 +93,6 @@ LifeBar.prototype.changeLife=function(modifier){
     }
 
   }
-  //On met à jour la vue en conséquence.
-  this.view.update(this);
 
 }
 
@@ -128,7 +126,7 @@ LifeBarView.prototype.update= function(health){
 
   this.bgWidth = health.getFullHealthValue() + 10;
   this.width = health.getValue();
-
+  
   //Initialisation des représentations des vies
    if(this.lives == null){
     this.lives = health.getGame().add.group();
