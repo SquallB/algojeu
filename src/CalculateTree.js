@@ -126,17 +126,25 @@ function calculateSequentialOrNode(node) {
 
 
     function calculateWaveKillAll(wave) {
+      var playerSuccessCoeff = 1;
+      if(stats['statsKillAllTotal'] > 0) {
+        playerSuccessCoeff /= (stats['statsKillAllSuccess'] / stats['statsKillAllTotal']);
+      }
 
       //Le score d'une vague KillAll eqt en fonction du nombre d'ennemis
       //de leur vie et de leur arme
-      return score = wave.numberEnemy * wave.life * calculateWeapon(wave.weapon, false);
+      return (wave.numberEnemy * wave.life * calculateWeapon(wave.weapon, false)) * playerSuccessCoeff;
     }
 
     function calculateWaveSurvive(wave) {
+      var playerSuccessCoeff = 1;
+      if(stats['statsSurviveTotal'] > 0) {
+        playerSuccessCoeff /= (stats['statsSurviveTotal'] / stats['statsSurviveTotal']);
+      }
 
       //Le score d'une vague Survive est en fonction de leur nombre,
       //de leur vitesse et de leur arme
-      return score = 2000 / wave.speed * calculateWeapon(wave.weapon, false) * wave.numberEnemy;
+      return (2000 / wave.speed * calculateWeapon(wave.weapon, false) * wave.numberEnemy) * playerSuccessCoeff;
     }
 
     function calculateToken(token) {

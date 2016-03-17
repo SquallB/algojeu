@@ -476,17 +476,20 @@ function isObjectiveLeafFulfill(leaf) {
     if (value.statut === undefined) return false;
 
     if (value.objective === "kill_all" || value.objective === "survive") {
-        if(value.objective === "kill_all") {
-            var timeToClear = game.time.now - leaf.startTime;
-            killAllTime = (killAllTime + timeToClear) / 2;
-            killAllSuccess++;
+        value.statut = areAllDeadOrGone(leaf);
+        if(value.statut) {
+            if(value.objective === "kill_all") {
+                var timeToClear = game.time.now - leaf.startTime;
+                killAllTime = (killAllTime + timeToClear) / 2;
+                killAllSuccess++;
+            }
+            else if(value.objective = "survive") {
+                var damageDiff = damageCounter - leaf.startDamage;
+                surviveDamage = (surviveDamage + damageDiff) / 2;
+                surviveSuccess++;
+            }
         }
-        else if(value.objective = "survive") {
-            var damageDiff = damageCounter - leaf.startDamage;
-            surviveDamage = (surviveDamage + damageDiff) / 2;
-            surviveSuccess++;
-        }
-        return (value.statut = areAllDeadOrGone(leaf));
+        return value.statut;
     } else if (value.objective === "get_token") {
         /* if (value.thetoken !== undefined && !value.thetoken.exists && !value.thetoken.visible) console.log("isObjectiveLeafFulfill : get_token");
         else console.log("!isObjectiveLeafFulfill : get_token"); */
@@ -595,6 +598,7 @@ function getStatValue(statName) {
 }
 
 function getStats() {
+    getStatValue('statsNumber');
     getStatValue('statsScore');
     getStatValue('statsDamage');
     getStatValue('statsTime');
@@ -647,13 +651,13 @@ function generatePlayer(stats,  game) {
     //détermination de l'arme de départ
     var killRatio = stats['statsKills'];
     var weaponName;
-    if(killRatio === 0 || killRatio > 75) {
+    if(killRatio === 0 || killRatio > 0.75) {
         weaponName = 'SINGLEBULLET';
     }
-    else if(killRatio > 50) {
+    else if(killRatio > 0.50) {
         weaponName = 'THREEWAY';
     }
-    else if(killRatio > 25) {
+    else if(killRatio > 0.25) {
         weaponName = 'ROCKETS';
     }
     else {
