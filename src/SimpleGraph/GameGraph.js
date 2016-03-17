@@ -43,10 +43,24 @@ GameGraph.prototype.generateGraph = function(nbNodes,game){
 	
 	this.addRndLeavesToNode(gameTree, game,bossNode.getId());
 	gameTree.addEdge(bossNode,boss);
-	this.displayTree(gameTree);
+	
 
 
 	return gameTree;
+}
+
+GameGraph.prototype.generateValidGraph = function(game, expectedDifficulty){
+	var nbNodes = game.rnd.integerInRange(5, 10);
+
+	var tree = this.generateGraph(nbNodes,game);
+	var difficulty = calculateNode(tree.getRoot());
+	while(difficulty<expectedDifficulty*0.8 || difficulty>expectedDifficulty*1.2){
+		nbNodes = game.rnd.integerInRange(5, 10);
+		tree = this.generateGraph(nbNodes,game);
+		difficulty = calculateNode(tree.getRoot());
+	}
+	this.displayTree(tree);
+	return tree;
 }
 
 
