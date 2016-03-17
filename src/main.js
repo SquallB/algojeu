@@ -45,16 +45,22 @@ var Menu = {
         // Parameters are : X , Y , image name (see above)
 
         var style = { font: "65px Arial", fill: "#ff0044", align: "center" };
-        
+
         var button = this.add.button(0, 0, 'play', this.startGame, this);
         button.width = 800;
         button.height = 600;
+        stateText = game.add.text(game.world.centerX,game.world.centerY,' ', { font: '84px Arial', fill: '#FF0000' });
+        stateText.anchor.setTo(0.5, 0.5);
+
+        stateText.text = "Click to play !";
+        stateText.visible = true;
+
     },
 
     startGame: function () {
 
         // Change the state to the actual game.
-
+        stateText.visible = false;
         this.state.start('game');
 
     }
@@ -66,20 +72,24 @@ var CompleteMenu = {
 
     preload : function() {
         // Loading images is required so that later on we can create sprites based on the them.
-        // The first argument is how our image will be refered to, 
+        // The first argument is how our image will be refered to,
         // the second one is the path to our file.
         game.load.image('play', 'spaceship.png');
     },
 
     create: function () {
         // Add a sprite to your game, here the sprite will be the game's logo
-        // Parameters are : X , Y , image name (see above) 
-        
+        // Parameters are : X , Y , image name (see above)
+
         var style = { font: "65px Arial", fill: "#ff0044", align: "center" };
-        
+
         var button = this.add.button(0, 0, 'play', this.startGame, this);
         button.width = 800;
         button.height = 600;
+        stateText = game.add.text(game.world.centerX,game.world.centerY,' ', { font: '50px Arial', fill: '#FF0000' });
+        stateText.anchor.setTo(0.5, 0.5);
+        stateText.text = "CONGRATULATIONS\n Click to play another one !";
+        stateText.visible = true;
     },
 
     startGame: function () {
@@ -171,9 +181,9 @@ function update() {
             var time = new Date(game.time.now - game.time.pauseDuration);
             score = calculateScore();
             initInfos("LEVEL FINISHED ! CONGRATULATIONS !<br/>Time: " + time.getUTCMinutes() + ":" + time.getUTCSeconds() + '<br/> Score : ' + score, "green");
-            
+
             updateStats(player);
-           
+
             game.state.start('CompleteMenu',true,false);
 
         }

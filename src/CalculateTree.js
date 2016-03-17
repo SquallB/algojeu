@@ -157,8 +157,6 @@ function calculateSequentialOrNode(node) {
         //Tout comme ceux de vie
         scoreToken = -500;
       }
-      console.log("TOKEN");
-      console.log(scoreToken);
       return scoreToken;
     }
 
