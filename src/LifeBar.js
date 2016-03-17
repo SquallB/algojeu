@@ -1,9 +1,9 @@
 
 
-function LifeBar(gameModel, value){
-  this.value = value;
+function LifeBar(gameModel, lives, value){
+  this.value = value || 100;
   this.fullHeathValue=value;
-  this.lives = 3;
+  this.lives = lives || 3;
   this.shield = 0;
 
   this.game = gameModel;

@@ -1,8 +1,8 @@
-var Player = function(game, posX, posY, weapon, life, shield, speed) {
+var Player = function(game, posX, posY, weapon, lives, life, shield, speed) {
   Phaser.Sprite.call(this, game, posX, posY, 'ship');
 
   this.weapon = weapon;
-  this.lifeBar = new LifeBar(game, life || 100);
+  this.lifeBar = new LifeBar(game, lives || 100);
   this.lifeBar.shield = shield || 0;
   this.speed = speed || 500;
 };

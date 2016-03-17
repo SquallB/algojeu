@@ -12,6 +12,7 @@ var level;
 var counter = 0;
 var stats = {};
 var nbKills = 0;
+var damageCounter = 0;
 var score = 0;
 
 function initInfos(text, color = "black") {
@@ -83,8 +84,10 @@ function create() {
 
     background = game.add.tileSprite(0, 0, 800, 600, 'starfield');
 
-    player = new Player(game, 100, 370, new Weapon.SingleBullet(game, true));
-
+    stats = {};
+    getStats();
+    player = generatePlayer(stats, game);
+    
     game.add.existing(player);
     game.physics.enable(player, Phaser.Physics.ARCADE);
     player.body.collideWorldBounds = true;
@@ -92,8 +95,6 @@ function create() {
     level = gameGraph.generateGraph(5,game);
     var rootNode = level.getRoot();
     var rootValue = rootNode.getValue();
-    console.log(calculateNode(rootNode));
-
 
     cursors = game.input.keyboard.createCursorKeys();
     game.input.keyboard.addKeyCapture([ Phaser.Keyboard.SPACEBAR ]);
@@ -113,8 +114,6 @@ function create() {
 
     //Initialisation de la div #info
     initInfos("GAME STARTED", "green");
-
-    getStats();
 }
 
 function setupInvader (invader) {
@@ -202,6 +201,7 @@ function bulletsCollisionHandler(bullet, enemy) {
 
 function playerCollisionHandler(player, enemy) {
     player.lifeBar.changeLife(-enemy.damage);
+    damageCounter += enemy.damage;
     var explosion = explosions.getFirstExists(false);
     explosion.reset(enemy.body.x, enemy.body.y);
     explosion.play('kaboom', 30, false, true);
@@ -476,23 +476,23 @@ function getStats() {
     }
 
     stat = localStorage.getItem('statsScore');
-    if(stats['statsScore'] === null) {
+    if(stat === null) {
         stats['statsScore'] = 0;
     }
     else {
         stats['statsScore'] = parseInt(stat);
     }
 
-    stat = localStorage.getItem('statsLife');
-    if(stats['statsLife'] === null) {
-        stats['statsLife'] = 0;
+    stat = localStorage.getItem('statsDamage');
+    if(stat === null) {
+        stats['statsDamage'] = 0;
     }
     else {
-        stats['statsLife'] = parseFloat(stat);
+        stats['statsDamage'] = parseFloat(stat);
     }
 
     stat = localStorage.getItem('statsTime');
-    if(stats['statsTime'] === null) {
+    if(stat === null) {
         stats['statsTime'] = 0;
     }
     else {
@@ -500,7 +500,7 @@ function getStats() {
     }
 
     stat = localStorage.getItem('statsKills');
-    if(stats['statsKills'] === null) {
+    if(stat === null) {
         stats['statsKills'] = 0;
     }
     else {
@@ -511,9 +511,9 @@ function getStats() {
 function updateStats() {
     stats['statsNumber']++;
     stats['statsScore'] = (stats['statsScore'] + score) / stats['statsNumber'];
-    stats['statsLife'] = (stats['statsLife'] + player.lifeBar.lives * player.lifeBar.fullHeathValue + player.lifeBar.value) / stats['statsNumber'];
+    stats['statsDamage'] = (stats['statsDamage'] + damageCounter) / stats['statsNumber'];
     stats['statsTime'] = (stats['statsTime'] + game.time.now) / stats['statsNumber'];
-    stats['statsKills'] = (stats['statsKills'] + nbKills) / stats['statsNumber'];
+    stats['statsKills'] = (stats['statsKills'] + (nbKills / enemies.length)) / stats['statsNumber'];
 
     saveStats();
 }
@@ -527,7 +527,34 @@ function saveStats(player) {
 function calculateScore() {
     var difficultyCoeff = calculateNode(level.getRoot()) / 150;
     var killScore = (nbKills / enemies.length) * 1500;
-    var lifeScore = (player.lifeBar.value + player.lifeBar.lives * player.lifeBar.fullHeathValue) / 4;
+    var lifeScore = -(damageCounter * 2);
     var timeScore = 100000000 / game.time.now;
     return Math.round(difficultyCoeff * (killScore + lifeScore + timeScore));
+}
+
+function generatePlayer(stats,  game) {
+    //détermination de la vie de départ en fonction de la moyenne des dégâts subis
+    var nbLives = 3;
+    if(stats['statsDamage'] !== 0) {
+        nbLives = Math.floor((stats['statsDamage'] * 0.9) / 100);
+    }
+
+    //détermination de l'arme de départ
+    var killRatio = stats['statsKills'];
+    var weaponName;
+    if(killRatio === 0 || killRatio > 75) {
+        weaponName = 'SINGLEBULLET';
+    }
+    else if(killRatio > 50) {
+        weaponName = 'THREEWAY';
+    }
+    else if(killRatio > 25) {
+        weaponName = 'ROCKETS';
+    }
+    else {
+        weaponName = 'SPLITSHOT';
+    }
+    var weapon = createWeapon(weaponName, game, true);
+
+    return new Player(game, 100, 370, weapon, nbLives);
 }
