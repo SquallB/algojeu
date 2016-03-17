@@ -587,10 +587,10 @@ function createToken(token, posX, posY) {
 function getStatValue(statName) {
     var stat = localStorage.getItem(statName);
     if(stat === null) {
-        stats['statName'] = 0;
+        stats[statName] = 0;
     }
     else {
-        stats['statName'] = parseFloat(stat);
+        stats[statName] = parseFloat(stat);
     }
 }
 
